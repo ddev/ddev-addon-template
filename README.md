@@ -1,20 +1,35 @@
-[![tests](https://github.com/drud/ddev-memcached/actions/workflows/tests.yml/badge.svg)](https://github.com/drud/ddev-memcached/actions/workflows/tests.yml) ![project is maintained](https://img.shields.io/maintenance/yes/2021.svg)
+[![tests](https://github.com/drud/ddev-addon-template/actions/workflows/tests.yml/badge.svg)](https://github.com/drud/ddev-addon-template/actions/workflows/tests.yml) ![project is maintained](https://img.shields.io/maintenance/yes/2022.svg)
 
-## What is this?
+## What is ddev-addon-template?
 
-This repository allows you to quickly install memcached into a [Ddev](https://ddev.readthedocs.io) project using just `ddev get drud/ddev-memcached`.
+This repository is a template for providing [DDEV](https://ddev.readthedocs.io) addons and services.
 
-## Installation
+In ddev v1.19+ addons can be installed from the command line using the `ddev get` command, for example, `ddev get drud/ddev-addon-template` or `ddev get drud/ddev-drupal9-solr`.
 
-1.`ddev get drud/ddev-memcached && ddev restart`
-5. `ddev restart`
+A repository like this one is the way to get started. You can create a new repo from this one by clicking the template button in the top right corner of the page.
 
-## Explanation
+![template button](images/template-button.png)
 
-This memcached recipe for [ddev](https://ddev.readthedocs.io) installs a [`.ddev/docker-compose.memcached.yaml`](docker-compose.memcached.yaml) using the `memcached` docker image.
+## Components of the repository
 
-## Interacting with Memcached
+* The fundamental contents of the add-on service or other component. For example, in this template there is a [docker-compose.addon-template.yaml](docker-compose.addon-template.yaml) file.
+* An [install.yaml](install.yaml) file that describes how to install the service or other component.
+* A test suite in [test.bats](tests/test.bats) that makes sure the service continues to work as expected.
+* [Github actions setup](.github/workflows/tests.yml) so that the tests run automatically when you push to the repository.
 
-* The Memcached instance will listen on TCP port 11211 (the Memcached default).
-* Configure your application to access Memcached on the host:port `memcached:11211`.
-* To reach the Memcached admin interface, run ddev ssh to connect to the web container, then use nc or telnet to connect to the Memcached container on port 11211, i.e. nc memcached 11211. You can then run commands such as `stats` to see usage information.
+## Getting started
+
+1. Choose a good descriptive name for your add-on. It should probably start with "ddev-" and include the basic service or functionality. If it's particular to a specific CMS, perhaps `ddev-<CMS>-servicename`.
+2. Create the new template repository by using the template button.
+3. Globally replace "addon-template" with the name of your add-on.
+4. Add the files that need to be added to a ddev project to the repository. For example, you might remove `docker-composeaddon-template.yaml` with the `docker-compose.*.yaml` for your recipe.
+5. Update the install.yaml to give the necessary instructions for installing the add-on.
+  * The fundamental line is the `files` directive, a list of files to be copied from this repo into the project `.ddev` directory.
+  * You can optionally add files to the `global_files` directive as well, which will cause files to be placed in the global `.ddev` directory, `~/.ddev`.
+  * Finally, `pre_install_commands` and `post_install_commands` are supported.
+6. Update `tests/test.bats` to provide a reasonable test for the repository. You can run it manually with `bats tests` and it will be run on push and nightly as well. Please make sure to attend to test failures when they happen. Others will be depending on you.
+7. When everything is working, including the tests, you can push the repository to GitHub.
+8. Create a release on GitHub.
+9. Test with `ddev get <owner/repo>`.
+10. Update the README.md to describe the add-on, how to use it, and how to contribute. If there are any manual actions that have to be taken, please explain them. If it requires special configuration of the using project, please explain how to do those. Examples in [drud/ddev-drupal9-solr](https://github.com/drud/ddev-drupal9-solr), [drud/ddev-memcached](github.com/drud/ddev-memcached), and [drud/ddev-beanstalkd](https://github.com/drud/ddev-beanstalkd).
+
