@@ -27,9 +27,10 @@ A repository like this one is the way to get started. You can create a new repo 
   * The fundamental line is the `files` directive, a list of files to be copied from this repo into the project `.ddev` directory.
   * You can optionally add files to the `global_files` directive as well, which will cause files to be placed in the global `.ddev` directory, `~/.ddev`.
   * Finally, `pre_install_commands` and `post_install_commands` are supported.
-6. Update `tests/test.bats` to provide a reasonable test for the repository. You can run it manually with `bats tests` and it will be run on push and nightly as well. Please make sure to attend to test failures when they happen. Others will be depending on you.
+6. Update `tests/test.bats` to provide a reasonable test for the repository. You can run it manually with `bats tests` and it will be run on push and nightly as well. Please make sure to attend to test failures when they happen. Others will be depending on you. `bats` is a simple testing framework that just uses `bash`. You can install it with `brew install bats-core` or [see other techniques](https://bats-core.readthedocs.io/en/stable/installation.html). See [bats tutorial](https://bats-core.readthedocs.io/en/stable/).
 7. When everything is working, including the tests, you can push the repository to GitHub.
 8. Create a release on GitHub.
-9. Test with `ddev get <owner/repo>`.
+9. Test manually with `ddev get <owner/repo>`.
 10. Update the README.md to describe the add-on, how to use it, and how to contribute. If there are any manual actions that have to be taken, please explain them. If it requires special configuration of the using project, please explain how to do those. Examples in [drud/ddev-drupal9-solr](https://github.com/drud/ddev-drupal9-solr), [drud/ddev-memcached](github.com/drud/ddev-memcached), and [drud/ddev-beanstalkd](https://github.com/drud/ddev-beanstalkd).
+11. Do a Pull Request to add your add-on to the list of available add-ons. 
 
