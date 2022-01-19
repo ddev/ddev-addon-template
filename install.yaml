@@ -1,0 +1,9 @@
+name: memcached
+
+pre_install_actions:
+
+# files and directories listed here are copied into .ddev
+files:
+- docker-compose.memcached.yaml
+
+post_install_actions:
