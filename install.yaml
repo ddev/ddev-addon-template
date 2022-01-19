@@ -8,7 +8,7 @@ pre_install_actions:
 # - "docker volume rm ddev-${DDEV_PROJECT}_solr 2>/dev/null || true"
 
 # list of files and directories listed that are copied into project .ddev directory
-files:
+project_files:
 - docker-compose.addon-template.yaml
 # - extra_files/
 # - somefile.sh
