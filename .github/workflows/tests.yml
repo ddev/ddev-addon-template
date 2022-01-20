@@ -29,8 +29,9 @@ jobs:
 
     strategy:
       matrix:
-#        ddev_version: [latest, edge, HEAD, PR]
-        ddev_version: [PR]
+#        ddev_version: [latest, edge, HEAD]
+        ddev_version: [edge, HEAD]
+#        ddev_version: [PR]
       fail-fast: false
 
     runs-on: ubuntu-20.04
