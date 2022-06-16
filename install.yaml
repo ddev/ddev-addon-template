@@ -5,7 +5,14 @@ name: addon-template
 # or doing a sanity check for requirements.
 # DDEV environment variables can be interpolated into these actions
 pre_install_actions:
-# - 'if [ "$(arch)" = "arm64" -o "$(arch)" = "aarch64" ]; then echo "This package does not work on arm64 machines"; exit 1; fi'
+  # Actions with #ddev-nodisplay will not show the execution of the action, but may show their output
+# - |
+  # #ddev-nodisplay
+  # if [ "$(arch)" = "arm64" -o "$(arch)" = "aarch64" ]; then
+    # echo "This package does not work on arm64 machines";
+    # exit 1;
+  #fi
+
 # - "docker volume rm ddev-${DDEV_PROJECT}_solr 2>/dev/null || true"
 #- |
 #  # Using #ddev-nodisplay tells ddev to be quiet about this action and not show it or its output.
@@ -39,6 +46,8 @@ pre_install_actions:
 #  EOF
 
 # list of files and directories listed that are copied into project .ddev directory
+# Each file should contain #ddev-generated so it can be replaced by a later `ddev get`
+# if it hasn't been modified by the user.
 # DDEV environment variables can be interpolated into these filenames
 project_files:
 - docker-compose.addon-template.yaml
