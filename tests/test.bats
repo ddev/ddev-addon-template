@@ -1,20 +1,20 @@
 setup() {
   set -eu -o pipefail
   export DIR="$( cd "$( dirname "$BATS_TEST_FILENAME" )" >/dev/null 2>&1 && pwd )/.."
-  export TESTDIR=~/tmp/testelasticsearch
+  export TESTDIR=~/tmp/test-addon-template
   mkdir -p $TESTDIR
   export PROJNAME=test-addon-template
   export DDEV_NON_INTERACTIVE=true
-  ddev delete -Oy ${PROJNAME} || true
+  ddev delete -Oy ${PROJNAME} >/dev/null 2>&1 || true
   cd "${TESTDIR}"
   ddev config --project-name=${PROJNAME}
-  ddev start
+  ddev start -y >/dev/null
 }
 
 teardown() {
   set -eu -o pipefail
   cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
-  ddev delete -Oy ${PROJNAME}
+  ddev delete -Oy ${PROJNAME} >/dev/null
   [ "${TESTDIR}" != "" ] && rm -rf ${TESTDIR}
 }
 
@@ -34,6 +34,7 @@ teardown() {
   cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
   echo "# ddev get drud/ddev-addon-template with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
   ddev get drud/ddev-addon-template
-  ddev restart
+  ddev restart >/dev/null
+  # Do something useful here that verifies the add-on
   # ddev exec "curl -s elasticsearch:9200" | grep "${PROJNAME}-elasticsearch"
 }
