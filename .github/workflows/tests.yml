@@ -38,7 +38,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Environment setup
-      run: |
+    - run: echo "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin" >> $GITHUB_PATH
+    - run: |
         brew install bats-core mkcert
         mkcert -install
 
