@@ -6,7 +6,7 @@
 
 ## What is ddev-addon-template?
 
-This repository is a template for providing [DDEV](https://ddev.readthedocs.io) addons and services.
+This repository is a template for providing [DDEV](https://ddev.readthedocs.io) add-ons and services.
 
 In DDEV addons can be installed from the command line using the `ddev get` command, for example, `ddev get ddev/ddev-addon-template` or `ddev get ddev/ddev-drupal9-solr`.
 
