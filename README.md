@@ -1,8 +1,10 @@
 [![tests](https://github.com/drud/ddev-addon-template/actions/workflows/tests.yml/badge.svg)](https://github.com/drud/ddev-addon-template/actions/workflows/tests.yml) ![project is maintained](https://img.shields.io/maintenance/yes/2022.svg)
 
-# ddev-addon-template
+# ddev-addon-template <!-- omit in toc -->
 
-[![tests](https://github.com/ddev/ddev-addon-template/actions/workflows/tests.yml/badge.svg)](https://github.com/ddev/ddev-addon-template/actions/workflows/tests.yml) ![project is maintained](https://img.shields.io/maintenance/yes/2024.svg)
+* [What is ddev-addon-template?](#what-is-ddev-addon-template)
+* [Components of the repository](#components-of-the-repository)
+* [Getting started](#getting-started)
 
 ## What is ddev-addon-template?
 
