@@ -77,7 +77,7 @@ jobs:
       with:
         limit-access-to-actor: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
-      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true'}}
 
     - name: tests
       run: bats tests
