@@ -70,8 +70,7 @@ jobs:
         mv ddev /usr/local/bin/ddev && chmod +x /usr/local/bin/ddev
 
     - name: Download docker images
-      run: | 
-        mkdir junk && pushd junk && ddev config --auto && ddev debug download-images >/dev/null
+      run: mkdir junk && pushd junk && ddev config --auto && ddev debug download-images >/dev/null
 
     - name: tmate debugging session
       uses: mxschmitt/action-tmate@v3
@@ -87,5 +86,3 @@ jobs:
     # GitHub from turning off tests after 60 days
     - uses: gautamkrishnar/keepalive-workflow@v1
       if: matrix.ddev_version == 'stable'
-
-
