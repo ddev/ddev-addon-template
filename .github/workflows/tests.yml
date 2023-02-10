@@ -10,9 +10,10 @@ on:
   workflow_dispatch:
     inputs:
       debug_enabled:
-        description: 'Debug with tmate set "debug_enabled"'
+        type: boolean
+        description: Debug with tmate
         required: false
-        default: "false"
+        default: false
 
 defaults:
   run:
@@ -69,15 +70,14 @@ jobs:
         mv ddev /usr/local/bin/ddev && chmod +x /usr/local/bin/ddev
 
     - name: Download docker images
-      run: | 
-        mkdir junk && pushd junk && ddev config --auto && ddev debug download-images >/dev/null
-        docker pull memcached:1.6 >/dev/null
+      run: mkdir junk && pushd junk && ddev config --auto && ddev debug download-images >/dev/null
+
     - name: tmate debugging session
       uses: mxschmitt/action-tmate@v3
       with:
         limit-access-to-actor: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
-      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+      if: github.event.inputs.debug_enabled == 'true'
 
     - name: tests
       run: bats tests
@@ -86,5 +86,3 @@ jobs:
     # GitHub from turning off tests after 60 days
     - uses: gautamkrishnar/keepalive-workflow@v1
       if: matrix.ddev_version == 'stable'
-
-
