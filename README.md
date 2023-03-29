@@ -28,7 +28,7 @@ A repository like this one is the way to get started. You can create a new repo 
 1. Choose a good descriptive name for your add-on. It should probably start with "ddev-" and include the basic service or functionality. If it's particular to a specific CMS, perhaps `ddev-<CMS>-servicename`.
 2. Create the new template repository by using the template button.
 3. Globally replace "addon-template" with the name of your add-on.
-4. Add the files that need to be added to a ddev project to the repository. For example, you might remove `docker-composeaddon-template.yaml` with the `docker-compose.*.yaml` for your recipe.
+4. Add the files that need to be added to a ddev project to the repository. For example, you might remove `docker-compose.addon-template.yaml` with the `docker-compose.*.yaml` for your recipe.
 5. Update the install.yaml to give the necessary instructions for installing the add-on.
 
    * The fundamental line is the `project_files` directive, a list of files to be copied from this repo into the project `.ddev` directory.
