@@ -5,6 +5,7 @@
 * [What is ddev-addon-template?](#what-is-ddev-addon-template)
 * [Components of the repository](#components-of-the-repository)
 * [Getting started](#getting-started)
+* [How to debug in Github Actions](#how-to-debug-in-github-actions)
 
 ## What is ddev-addon-template?
 
@@ -45,6 +46,45 @@ A repository like this one is the way to get started. You can create a new repo 
 13. When it has matured you will hopefully want to have it become an "official" maintained add-on. Open an issue in the [ddev queue](https://github.com/ddev/ddev/issues) for that.
 
 Note that more advanced techniques are discussed in [DDEV docs](https://ddev.readthedocs.io/en/latest/users/extend/additional-services/#additional-service-configurations-and-add-ons-for-ddev).
+
+## How to debug in Github Actions
+1. You need a SSH-key registered with Github. You either pick the key you already authenticate with `github.com` or you create a dedicated new one with `ssh-keygen -t ed25519 -a 64 -f tmate_ed25519 -C "$(date +'%d-%m-%Y')"` and add it at `https://github.com/settings/keys`.
+
+2. Add the following snippet to `~/.ssh/config`
+
+```
+Host *.tmate.io
+    User git
+    AddKeysToAgent yes
+    UseKeychain yes
+    PreferredAuthentications publickey
+    IdentitiesOnly yes
+    IdentityFile ~/.ssh/tmate_ed25519
+```
+3. Go to `https://github.com/<user>/<repo>/actions/workflows/tests.yml`.
+
+4. By clicking the `Run workflow`- button you have the option to the select the branch to run the workflow from and activate `tmate` by checking the `Debug with tmate` checkbox for this run.
+
+![tmate](images/gh-tmate.jpg)
+
+5. After the `workflow_dispatch`-event was triggered click the `All workflows`-link in the sidebar and then click the in progress workflow `tests`.
+
+7. Pick one of the jobs in progress in the sidebar.
+
+8. Wait until the current task list reaches the `tmate debugging session` section and the output shows something like that:
+
+```
+106 SSH: ssh PRbaS7SLVxbXImhjUqydQBgDL@nyc1.tmate.io
+107 or: ssh -i <path-to-private-SSH-key> PRbaS7SLVxbXImhjUqydQBgDL@nyc1.tmate.io
+108 SSH: ssh PRbaS7SLVxbXImhjUqydQBgDL@nyc1.tmate.io
+109 or: ssh -i <path-to-private-SSH-key> PRbaS7SLVxbXImhjUqydQBgDL@nyc1.tmate.io
+```
+
+9. Copy and execute the first option `ssh PRbaS7SLVxbXImhjUqydQBgDL@nyc1.tmate.io` in the terminal and continue by pressing either `q` or `ctrl-c`.
+
+10. Start the bats test with `bats tests/test.bats`.
+
+For a more detailed documentation about `tmate` see [Debug your GitHubActions by using tmate](https://mxschmitt.github.io/action-tmate/)
 
 **Contributed and maintained by [@CONTRIBUTOR](https://github.com/CONTRIBUTOR) based on the original [ddev-contrib recipe](https://github.com/ddev/ddev-contrib/tree/master/docker-compose-services/RECIPE) by [@CONTRIBUTOR](https://github.com/CONTRIBUTOR)**
 
