@@ -1,4 +1,6 @@
-name: addon-template
+# Details about the install.yaml file are at https://ddev.readthedocs.io/en/latest/users/extend/additional-services/#sections-and-features-of-ddev-get-add-on-installyaml
+
+name: your-addon
 
 # pre_install_actions - list of actions to run before installing the addon.
 # Examples would be removing an extraneous docker volume,
@@ -71,6 +73,10 @@ post_install_actions:
 # - chmod +x ~/.ddev/commands/web/somecommand
 # - touch somefile.${GOOS}.${DDEV_WEBSERVER}
 # - perl -pi -e 's/oldstring/newstring/g' docker-compose.addon-template.yaml
+
+# Shell actions that can be done during removal of the add-on
+removal_actions:
+# - rm ~/.ddev/commands/web/somecommand
 
 # Advanced usage - yaml files can be read in and then used as go template actions
 # in pre_install_actions and post_install_actions
