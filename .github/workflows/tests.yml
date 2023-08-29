@@ -19,16 +19,8 @@ on:
 permissions:
   contents: write
 
-env:
-  # Allow ddev get to use a github token to prevent rate limiting by tests
-  DDEV_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   tests:
-    defaults:
-      run:
-        shell: bash
-
     strategy:
       matrix:
         ddev_version: [stable, HEAD]
