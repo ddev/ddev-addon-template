@@ -63,7 +63,7 @@ Host *.tmate.io
 ```
 3. Go to `https://github.com/<user>/<repo>/actions/workflows/tests.yml`.
 
-4. By clicking the `Run workflow`- button you have the option to the select the branch to run the workflow from and activate `tmate` by checking the `Debug with tmate` checkbox for this run.
+4. Click the `Run workflow`- button and you will have the option to the select the branch to run the workflow from and activate `tmate` by checking the `Debug with tmate` checkbox for this run.
 
 ![tmate](images/gh-tmate.jpg)
 
@@ -71,7 +71,7 @@ Host *.tmate.io
 
 7. Pick one of the jobs in progress in the sidebar.
 
-8. Wait until the current task list reaches the `tmate debugging session` section and the output shows something like that:
+8. Wait until the current task list reaches the `tmate debugging session` section and the output shows something like:
 
 ```
 106 SSH: ssh PRbaS7SLVxbXImhjUqydQBgDL@nyc1.tmate.io
