@@ -45,6 +45,8 @@ This repository is a quick way to get started. You can create a new repo from th
 12. Add a good short description to your repo, and add the label "ddev-get". It will immediately be added to the list provided by `ddev get --list --all`.
 13. When it has matured you will hopefully want to have it become an "official" maintained add-on. Open an issue in the [ddev queue](https://github.com/ddev/ddev/issues) for that.
 
+Add-ons were covered in the DDEV Contributor Training Session, [DDEV Add-Ons, Creating, Testing, and Maintaining](https://ddev.com/blog/contributor-training). You can access the video directly at [link](https://www.dropbox.com/scl/fi/bnvlv7zswxwm8ix1s5u4t/2023-11-07_DDEV_Add-ons.mp4?rlkey=5cma8s11pscxq0skawsoqrscp&dl=0).
+
 Note that more advanced techniques are discussed in [DDEV docs](https://ddev.readthedocs.io/en/latest/users/extend/additional-services/#additional-service-configurations-and-add-ons-for-ddev).
 
 ## How to debug tests (Github Actions)
