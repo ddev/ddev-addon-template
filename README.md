@@ -52,7 +52,7 @@ Note that more advanced techniques are discussed in [DDEV docs](https://ddev.rea
 
 ## How to debug tests (Github Actions)
 
-1. You need a SSH-key registered with GitHub. You either pick the key you have already used with `github.com` or you create a dedicated new one with `ssh-keygen -t ed25519 -a 64 -f tmate_ed25519 -C "$(date +'%d-%m-%Y')"` and add it at `https://github.com/settings/keys`.
+1. You need an SSH-key registered with GitHub. You either pick the key you have already used with `github.com` or you create a dedicated new one with `ssh-keygen -t ed25519 -a 64 -f tmate_ed25519 -C "$(date +'%d-%m-%Y')"` and add it at `https://github.com/settings/keys`.
 
 2. Add the following snippet to `~/.ssh/config`:
 
