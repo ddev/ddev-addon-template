@@ -14,3 +14,4 @@ services:
 
     volumes:
     - ".:/mnt/ddev_config"
+    - "ddev-global-cache:/mnt/ddev-global-cache"
