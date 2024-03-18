@@ -15,9 +15,9 @@ on:
         required: false
         default: false
 
-# This is required for "gautamkrishnar/keepalive-workflow"
+# This is required for "gautamkrishnar/keepalive-workflow", see "ddev/github-action-add-on-test"
 permissions:
-  contents: write
+  actions: write
 
 jobs:
   tests:
@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: ddev/github-action-add-on-test@v1
+      - uses: ddev/github-action-add-on-test@v2
         with:
           ddev_version: ${{ matrix.ddev_version }}
           token: ${{ secrets.GITHUB_TOKEN }}
