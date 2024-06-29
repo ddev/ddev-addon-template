@@ -74,7 +74,7 @@ global_files:
 
 # List of add-on names that this add-on depends on
 dependencies:
-# - redis
+# - ddev/ddev-redis 
 
 # DDEV environment variables can be interpolated into these actions
 post_install_actions:
