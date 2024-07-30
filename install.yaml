@@ -6,7 +6,7 @@ name: addon-template
 # Examples would be removing an extraneous docker volume,
 # or doing a sanity check for requirements.
 # DDEV environment variables can be interpolated into these actions
-# The actions are executed in the context of the target project's root directory.
+# pre_install_actions are executed in the context of the target project's root directory.
 pre_install_actions:
   # Actions with #ddev-nodisplay will not show the execution of the action, but may show their output
   # - |
@@ -79,7 +79,7 @@ dependencies:
 # - redis
 
 # DDEV environment variables can be interpolated into these actions.
-# The actions are executed in the context of the target project's .ddev directory.
+# post_install_actions are executed in the context of the target project's .ddev directory.
 post_install_actions:
 # - chmod +x ~/.ddev/commands/web/somecommand
 # - touch ${DDEV_APPROOT}/somefile.${GOOS}.${DDEV_WEBSERVER}
@@ -87,7 +87,7 @@ post_install_actions:
 
 # Shell actions that can be done during removal of the add-on.
 # Files listed in project_files section will be automatically removed here if they contain #ddev-generated line.
-# The actions are executed in the context of the target project's .ddev directory.
+# removal_actions are executed in the context of the target project's .ddev directory.
 removal_actions:
   # - rm ~/.ddev/commands/web/somecommand
   # - |
