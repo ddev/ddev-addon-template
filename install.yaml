@@ -92,11 +92,11 @@ removal_actions:
   # - rm ~/.ddev/commands/web/somecommand
   # - |
   #   #ddev-nodisplay
-  #   if [ -f ${DDEV_APPROOT}/.ddev/docker-compose.some_extras.yaml ]; then
-  #     if grep -q '#ddev-generated' ${DDEV_APPROOT}/.ddev/docker-compose.some_extras.yaml; then
-  #       rm -f ${DDEV_APPROOT}/.ddev/docker-compose.some_extras.yaml
+  #   if [ -f ${DDEV_APPROOT}/.ddev/docker-compose.addon-template_extras.yaml ]; then
+  #     if grep -q '#ddev-generated' ${DDEV_APPROOT}/.ddev/docker-compose.addon-template_extras.yaml; then
+  #       rm -f ${DDEV_APPROOT}/.ddev/docker-compose.addon-template_extras.yaml
   #     else
-  #       echo "Unwilling to remove '${DDEV_APPROOT}/.ddev/docker-compose.some_extras.yaml' because it does not have #ddev-generated in it; you can manually delete it if it is safe to delete."
+  #       echo "Unwilling to remove '${DDEV_APPROOT}/.ddev/docker-compose.addon-template_extras.yaml' because it does not have #ddev-generated in it; you can manually delete it if it is safe to delete."
   #     fi
   #   fi
 
