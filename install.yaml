@@ -6,52 +6,54 @@ name: addon-template
 # Examples would be removing an extraneous docker volume,
 # or doing a sanity check for requirements.
 # DDEV environment variables can be interpolated into these actions
+# pre_install_actions are executed in the context of the target project's root directory.
 pre_install_actions:
   # Actions with #ddev-nodisplay will not show the execution of the action, but may show their output
-# - |
+  # - |
+  #   #ddev-nodisplay
+  #   #ddev-description:Check architecture type for incompatible arm64 type
+  #   if [ "$(uname -m)" = "arm64" -o "$(uname -m)" = "aarch64" ]; then
+  #     echo "This package does not work on arm64 (Apple Silicon) machines";
+  #     exit 1;
+  #   fi
+
+  # - "docker volume rm ddev-${DDEV_PROJECT}_solr 2>/dev/null || true"
+
+  # - |
+  # # Using #ddev-nodisplay tells ddev to be quiet about this action and not show it or its output.
   # #ddev-nodisplay
-  #ddev-description:Check architecture type for incompatible arm64 type
-  # if [ "$(uname -m)" = "arm64" -o "$(uname -m)" = "aarch64" ]; then
-    # echo "This package does not work on arm64 (Apple Silicon) machines";
-    # exit 1;
-  #fi
+  # #ddev-description:Remove solr volume
+  # if ! ( ddev debug capabilities 2>/dev/null | grep multiple-dockerfiles >/dev/null 2>&1 ) ; then
+  #   echo "This add-on requires DDEV v1.19.4 or higher, please upgrade." && exit 2
+  # fi
 
-# - "docker volume rm ddev-${DDEV_PROJECT}_solr 2>/dev/null || true"
-#- |
-#  # Using #ddev-nodisplay tells ddev to be quiet about this action and not show it or its output.
-#  #ddev-nodisplay
-#  #ddev-description:Remove solr volume
-#  if ! ( ddev debug capabilities 2>/dev/null | grep multiple-dockerfiles >/dev/null 2>&1 ) ; then
-#    echo "This add-on requires DDEV v1.19.4 or higher, please upgrade." && exit 2
-#  fi
-#- 'echo "what is your platform.sh token" && read x'
+  # - 'echo "what is your platform.sh token" && read x'
 
-# This item shows templating using DDEV environment variables.
-# -
-#   #ddev-description:Touch a file to create it
-#   touch somefile.${DDEV_PROJECT_TYPE}.${DDEV_DOCROOT}.txt
-#
+  # This item shows templating using DDEV environment variables.
+  # - |
+  #   #ddev-description:Touch a file to create it
+  #   touch ${DDEV_APPROOT}/.ddev/somefile.${DDEV_PROJECT_TYPE}.${DDEV_DOCROOT}.txt
 
-# This item shows complex go templating possibilities based on yaml_read_files
-#- |
-#- #ddev-description:Create a config.platformsh.yaml
-#  cat <<EOF >.ddev/config.platformsh.yaml
-#  php_version: {{ trimPrefix "php:" .platformapp.type }}
-#  database:
-#    type: {{ regexReplaceAll ":.*$" .services.db.type "" }}
-#    version: {{ regexReplaceAll "^.*:" .services.db.type "" }}
-#
-#  docroot: {{ dig "web" "locations" "/" "root" "notfound" .platformapp }}
-#  {{ if eq .platformapp.build.flavor "composer" }}
-#  hooks:
-#    post-start:
-#      - composer: install
-#  {{ if .platformapp.hooks.deploy }}
-#      - exec: "{{ trimAll "\n" .platformapp.hooks.deploy | splitList "\n" | join ` && ` }}"
-#  {{ end }}
-#  {{ end }}
-#
-#  EOF
+  # This item shows complex go templating possibilities based on yaml_read_files
+  # - |
+  #   #ddev-description:Create a config.platformsh.yaml
+  #   cat <<EOF >${DDEV_APPROOT}/.ddev/config.platformsh.yaml
+  #   php_version: {{ trimPrefix "php:" .platformapp.type }}
+  #   database:
+  #     type: {{ regexReplaceAll ":.*$" .services.db.type "" }}
+  #     version: {{ regexReplaceAll "^.*:" .services.db.type "" }}
+
+  #   docroot: {{ dig "web" "locations" "/" "root" "notfound" .platformapp }}
+  #   {{- if eq .platformapp.build.flavor "composer" }}
+  #   hooks:
+  #     post-start:
+  #       - composer: install
+  #   {{- if .platformapp.hooks.deploy }}
+  #       - exec: "{{ trimAll "\n" .platformapp.hooks.deploy | splitList "\n" | join ` && ` }}"
+  #   {{- end }}
+  #   {{- end }}
+
+  #   EOF
 
 # list of files and directories listed that are copied into project .ddev directory
 # Each file should contain #ddev-generated so it can be replaced by a later `ddev get`
@@ -76,20 +78,32 @@ global_files:
 dependencies:
 # - redis
 
-# DDEV environment variables can be interpolated into these actions
+# DDEV environment variables can be interpolated into these actions.
+# post_install_actions are executed in the context of the target project's .ddev directory.
 post_install_actions:
 # - chmod +x ~/.ddev/commands/web/somecommand
-# - touch somefile.${GOOS}.${DDEV_WEBSERVER}
-# - perl -pi -e 's/oldstring/newstring/g' docker-compose.addon-template.yaml
+# - touch ${DDEV_APPROOT}/somefile.${GOOS}.${DDEV_WEBSERVER}
+# - perl -pi -e 's/oldstring/newstring/g' ${DDEV_APPROOT}/.ddev/docker-compose.addon-template.yaml
 
-# Shell actions that can be done during removal of the add-on
+# Shell actions that can be done during removal of the add-on.
+# Files listed in project_files section will be automatically removed here if they contain #ddev-generated line.
+# removal_actions are executed in the context of the target project's .ddev directory.
 removal_actions:
-# - rm ~/.ddev/commands/web/somecommand
+  # - rm ~/.ddev/commands/web/somecommand
+  # - |
+  #   #ddev-nodisplay
+  #   if [ -f ${DDEV_APPROOT}/.ddev/docker-compose.addon-template_extras.yaml ]; then
+  #     if grep -q '#ddev-generated' ${DDEV_APPROOT}/.ddev/docker-compose.addon-template_extras.yaml; then
+  #       rm -f ${DDEV_APPROOT}/.ddev/docker-compose.addon-template_extras.yaml
+  #     else
+  #       echo "Unwilling to remove '${DDEV_APPROOT}/.ddev/docker-compose.addon-template_extras.yaml' because it does not have #ddev-generated in it; you can manually delete it if it is safe to delete."
+  #     fi
+  #   fi
 
-# Advanced usage - yaml files can be read in and then used as go template actions
+# Advanced usage - YAML files can be read in and then used as go template actions
 # in pre_install_actions and post_install_actions
 # See example in
 # https://github.com/ddev/ddev/blob/master/cmd/ddev/cmd/testdata/TestCmdGetComplex/recipe/install.yaml
 yaml_read_files:
-# someyaml: someyaml.yaml
-# otheryaml: someotheryaml.yaml
+  # someyaml: someyaml.yaml
+  # otheryaml: someotheryaml.yaml
