@@ -20,12 +20,13 @@ pre_install_actions:
   # - "docker volume rm ddev-${DDEV_PROJECT}_solr 2>/dev/null || true"
 
   # - |
-  # # Using #ddev-nodisplay tells ddev to be quiet about this action and not show it or its output.
-  # #ddev-nodisplay
-  # #ddev-description:Remove solr volume
-  # if ! ( ddev debug capabilities 2>/dev/null | grep multiple-dockerfiles >/dev/null 2>&1 ) ; then
-  #   echo "This add-on requires DDEV v1.19.4 or higher, please upgrade." && exit 2
-  # fi
+  #   # Using #ddev-nodisplay tells ddev to be quiet about this action and not show it or its output.
+  #   # You can also check for client DDEV version with ddev_version_constraint (see below).
+  #   #ddev-nodisplay
+  #   #ddev-description:Checking DDEV version
+  #   if ! ( ddev debug capabilities 2>/dev/null | grep corepack >/dev/null 2>&1 ) ; then
+  #     echo "This add-on requires DDEV v1.23+ or higher, please upgrade." && exit 2
+  #   fi
 
   # - 'echo "what is your platform.sh token" && read x'
 
@@ -74,6 +75,13 @@ global_files:
 # - commands/web/add-on-command
 # - homeadditions/some-file.txt
 
+# Version constraint for DDEV that will be validated against the running DDEV executable
+# and prevent add-on from being installed if it doesn't validate.
+# See https://github.com/Masterminds/semver#checking-version-constraints for constraint rules.
+# Available with DDEV v1.23.4+, and works only for DDEV v1.23.4+ binaries
+# example: ddev_version_constraint: '>= v1.23.4'
+ddev_version_constraint: ''
+
 # List of add-on names that this add-on depends on
 dependencies:
 # - redis
@@ -81,9 +89,9 @@ dependencies:
 # DDEV environment variables can be interpolated into these actions.
 # post_install_actions are executed in the context of the target project's .ddev directory.
 post_install_actions:
-# - chmod +x ~/.ddev/commands/web/somecommand
-# - touch ${DDEV_APPROOT}/somefile.${GOOS}.${DDEV_WEBSERVER}
-# - perl -pi -e 's/oldstring/newstring/g' ${DDEV_APPROOT}/.ddev/docker-compose.addon-template.yaml
+  # - chmod +x ~/.ddev/commands/web/somecommand
+  # - touch ${DDEV_APPROOT}/somefile.${GOOS}.${DDEV_WEBSERVER}
+  # - perl -pi -e 's/oldstring/newstring/g' ${DDEV_APPROOT}/.ddev/docker-compose.addon-template.yaml
 
 # Shell actions that can be done during removal of the add-on.
 # Files listed in project_files section will be automatically removed here if they contain #ddev-generated line.
