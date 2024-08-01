@@ -8,9 +8,7 @@ name: addon-template
 # DDEV environment variables can be interpolated into these actions
 # pre_install_actions are executed in the context of the target project's root directory.
 pre_install_actions:
-  # Actions with #ddev-nodisplay will not show the execution of the action, but may show their output
   # - |
-  #   #ddev-nodisplay
   #   #ddev-description:Check architecture type for incompatible arm64 type
   #   if [ "$(uname -m)" = "arm64" -o "$(uname -m)" = "aarch64" ]; then
   #     echo "This package does not work on arm64 (Apple Silicon) machines";
@@ -19,10 +17,8 @@ pre_install_actions:
 
   # - "docker volume rm ddev-${DDEV_PROJECT}_solr 2>/dev/null || true"
 
+  # You can also check for client DDEV version with ddev_version_constraint (see below).
   # - |
-  #   # Using #ddev-nodisplay tells ddev to be quiet about this action and not show it or its output.
-  #   # You can also check for client DDEV version with ddev_version_constraint (see below).
-  #   #ddev-nodisplay
   #   #ddev-description:Checking DDEV version
   #   if ! ( ddev debug capabilities 2>/dev/null | grep corepack >/dev/null 2>&1 ) ; then
   #     echo "This add-on requires DDEV v1.23+ or higher, please upgrade." && exit 2
@@ -63,17 +59,17 @@ pre_install_actions:
 # If you use directories, they must be directories that are managed
 # by this add-on, or removal could remove things that are not owned by it
 project_files:
-- docker-compose.addon-template.yaml
-# - some-directory/file1.txt
-# - some-directory/file2.txt
-# - extra_files_dir_created_by_this_template/
-# - somefile.sh
+  - docker-compose.addon-template.yaml
+  # - some-directory/file1.txt
+  # - some-directory/file2.txt
+  # - extra_files_dir_created_by_this_template/
+  # - somefile.sh
 
 # List of files and directories that are copied into the global .ddev directory
 # DDEV environment variables can be interpolated into these filenames
 global_files:
-# - commands/web/add-on-command
-# - homeadditions/some-file.txt
+  # - commands/web/add-on-command
+  # - homeadditions/some-file.txt
 
 # Version constraint for DDEV that will be validated against the running DDEV executable
 # and prevent add-on from being installed if it doesn't validate.
@@ -84,7 +80,7 @@ ddev_version_constraint: ''
 
 # List of add-on names that this add-on depends on
 dependencies:
-# - redis
+  # - redis
 
 # DDEV environment variables can be interpolated into these actions.
 # post_install_actions are executed in the context of the target project's .ddev directory.
@@ -99,7 +95,6 @@ post_install_actions:
 removal_actions:
   # - rm ~/.ddev/commands/web/somecommand
   # - |
-  #   #ddev-nodisplay
   #   if [ -f ${DDEV_APPROOT}/.ddev/docker-compose.addon-template_extras.yaml ]; then
   #     if grep -q '#ddev-generated' ${DDEV_APPROOT}/.ddev/docker-compose.addon-template_extras.yaml; then
   #       rm -f ${DDEV_APPROOT}/.ddev/docker-compose.addon-template_extras.yaml
