@@ -5,7 +5,6 @@ services:
     container_name: ddev-${DDEV_SITENAME}-addon-template
     image: busybox:stable
     command: tail -f /dev/null
-    networks: [default, ddev_default]
     restart: "no"
     # These labels ensure this service is discoverable by ddev.
     labels:

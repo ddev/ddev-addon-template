@@ -1,4 +1,4 @@
-# Details about the install.yaml file are at https://ddev.readthedocs.io/en/latest/users/extend/additional-services/#sections-and-features-of-ddev-get-add-on-installyaml
+# Details about the install.yaml file are at https://ddev.readthedocs.io/en/stable/users/extend/additional-services/#sections-and-features-of-ddev-get-add-on-installyaml
 
 name: addon-template
 
@@ -106,7 +106,7 @@ removal_actions:
 # Advanced usage - YAML files can be read in and then used as go template actions
 # in pre_install_actions and post_install_actions
 # See example in
-# https://github.com/ddev/ddev/blob/master/cmd/ddev/cmd/testdata/TestCmdGetComplex/recipe/install.yaml
+# https://github.com/ddev/ddev/blob/master/cmd/ddev/cmd/testdata/TestCmdAddonComplex/recipe/install.yaml
 yaml_read_files:
   # someyaml: someyaml.yaml
   # otheryaml: someotheryaml.yaml
