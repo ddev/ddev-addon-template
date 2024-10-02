@@ -4,7 +4,7 @@ setup() {
   export TESTDIR=~/tmp/test-addon-template
   mkdir -p $TESTDIR
   export PROJNAME=test-addon-template
-  export DDEV_NON_INTERACTIVE=true
+  export DDEV_NONINTERACTIVE=true
   ddev delete -Oy ${PROJNAME} >/dev/null 2>&1 || true
   cd "${TESTDIR}"
   ddev config --project-name=${PROJNAME}
