@@ -90,4 +90,4 @@ Host *.tmate.io
 
 For a more detailed documentation about `tmate` see [Debug your GitHub Actions by using tmate](https://mxschmitt.github.io/action-tmate/).
 
-**Contributed and maintained by [@CONTRIBUTOR](https://github.com/CONTRIBUTOR)**
+**Contributed and maintained by `@CONTRIBUTOR`**
