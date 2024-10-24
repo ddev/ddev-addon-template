@@ -53,13 +53,16 @@ pre_install_actions:
   #   EOF
 
 # list of files and directories listed that are copied into project .ddev directory
-# Each file should contain #ddev-generated so it can be replaced by a later `ddev get`
+# Each file should contain #ddev-generated so it can be replaced by a later `ddev add-on get`
 # if it hasn't been modified by the user.
 # DDEV environment variables can be interpolated into these filenames
 # If you use directories, they must be directories that are managed
 # by this add-on, or removal could remove things that are not owned by it
 project_files:
   - docker-compose.addon-template.yaml
+  # - commands/web/add-on-command
+  # - commands/host/add-on-command-host
+  # - web-build/Dockerfile.addon-template
   # - some-directory/file1.txt
   # - some-directory/file2.txt
   # - extra_files_dir_created_by_this_template/
@@ -67,6 +70,9 @@ project_files:
 
 # List of files and directories that are copied into the global .ddev directory
 # DDEV environment variables can be interpolated into these filenames
+# Note that if these files are used by a team, you will need to automate their installation
+# by adding `ddev add-on get` to your workflow to ensure that everyone has them.
+# Otherwise, use 'project_files' to commit them to the repository.
 global_files:
   # - commands/web/add-on-command
   # - homeadditions/some-file.txt
