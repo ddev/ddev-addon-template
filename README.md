@@ -2,7 +2,7 @@
 
 # DDEV add-on template <!-- omit in toc -->
 
-* [What is ddev-addon-template?](#what-is-ddev-addon-template)
+* [What is DDEV add-on template?](#what-is-ddev-add-on-template)
 * [Components of the repository](#components-of-the-repository)
 * [Getting started](#getting-started)
 * [How to debug in Github Actions](./README_DEBUG.md)
