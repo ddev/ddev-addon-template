@@ -1,17 +1,17 @@
 [![tests](https://github.com/ddev/ddev-addon-template/actions/workflows/tests.yml/badge.svg)](https://github.com/ddev/ddev-addon-template/actions/workflows/tests.yml) ![project is maintained](https://img.shields.io/maintenance/yes/2024.svg)
 
-# ddev-addon-template <!-- omit in toc -->
+# DDEV add-on template <!-- omit in toc -->
 
 * [What is ddev-addon-template?](#what-is-ddev-addon-template)
 * [Components of the repository](#components-of-the-repository)
 * [Getting started](#getting-started)
 * [How to debug in Github Actions](./README_DEBUG.md)
 
-## What is ddev-addon-template?
+## What is DDEV add-on template?
 
 This repository is a template for providing [DDEV](https://ddev.readthedocs.io) add-ons and services.
 
-In DDEV addons can be installed from the command line using the `ddev add-on get` command (or `ddev get` for versions of DDEV prior to v1.23.5), for example, `ddev add-on get ddev/ddev-redis` or `ddev add-on get ddev/ddev-solr`.
+In DDEV, add-ons can be installed from the command line using the `ddev add-on get` command (or `ddev get` for versions of DDEV prior to v1.23.5), for example, `ddev add-on get ddev/ddev-redis` or `ddev add-on get ddev/ddev-solr`.
 
 This repository is a quick way to get started. You can create a new repo from this one by clicking the template button in the top right corner of the page.
 
