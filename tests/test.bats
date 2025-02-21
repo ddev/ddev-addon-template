@@ -32,7 +32,7 @@ setup() {
   export DDEV_NO_INSTRUMENTATION=true
   ddev delete -Oy "${PROJNAME}" >/dev/null 2>&1 || true
   cd "${TESTDIR}"
-  run ddev config --project-name="${PROJNAME}"
+  run ddev config --project-name="${PROJNAME}" --project-tld=ddev.site
   assert_success
   run ddev start -y
   assert_success
@@ -40,8 +40,13 @@ setup() {
 
 health_checks() {
   # Do something useful here that verifies the add-on
-  run ddev exec curl -s https://localhost:443/
-  assert_success
+
+  # You can check for specific information in headers:
+  # run curl -sfI https://${PROJNAME}.ddev.site
+  # assert_output --partial "HTTP/2 200"
+  # assert_output --partial "test_header"
+
+  # Or check if some command gives expected output:
   DDEV_DEBUG=true run ddev launch
   assert_success
   assert_output --partial "FULLURL https://${PROJNAME}.ddev.site"
