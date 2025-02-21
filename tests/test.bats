@@ -8,7 +8,7 @@
 # And run this in the add-on root directory:
 #   bats ./tests/test.bats
 # To exclude release tests:
-#   bats ./tests/test.bats --filter-tags !release
+#   bats ./tests/test.bats --filter-tags '!release'
 # For debugging:
 #   bats ./tests/test.bats --show-output-of-passing-tests --verbose-run --print-output-on-failure
 
