@@ -42,10 +42,9 @@ health_checks() {
   # Do something useful here that verifies the add-on
   run ddev exec curl -s https://localhost:443/
   assert_success
-  run ddev describe
+  DDEV_DEBUG=true run ddev launch
   assert_success
-  assert_output --partial "web"
-  assert_output --partial "db"
+  assert_output --partial "FULLURL https://${PROJNAME}.ddev.site"
 }
 
 teardown() {
