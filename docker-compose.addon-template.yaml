@@ -6,11 +6,11 @@ services:
     image: busybox:stable
     command: tail -f /dev/null
     restart: "no"
-    # These labels ensure this service is discoverable by ddev.
+    # These labels ensure this service is discoverable by DDEV.
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
       com.ddev.approot: $DDEV_APPROOT
 
     volumes:
-    - ".:/mnt/ddev_config"
-    - "ddev-global-cache:/mnt/ddev-global-cache"
+      - ".:/mnt/ddev_config"
+      - "ddev-global-cache:/mnt/ddev-global-cache"

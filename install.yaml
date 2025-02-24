@@ -81,8 +81,7 @@ global_files:
 # and prevent add-on from being installed if it doesn't validate.
 # See https://github.com/Masterminds/semver#checking-version-constraints for constraint rules.
 # Available with DDEV v1.23.4+, and works only for DDEV v1.23.4+ binaries
-# example: ddev_version_constraint: '>= v1.23.4'
-ddev_version_constraint: ''
+ddev_version_constraint: '>= v1.24.2'
 
 # List of add-on names that this add-on depends on
 dependencies:
@@ -112,7 +111,7 @@ removal_actions:
 # Advanced usage - YAML files can be read in and then used as go template actions
 # in pre_install_actions and post_install_actions
 # See example in
-# https://github.com/ddev/ddev/blob/master/cmd/ddev/cmd/testdata/TestCmdAddonComplex/recipe/install.yaml
+# https://github.com/ddev/ddev/blob/main/cmd/ddev/cmd/testdata/TestCmdAddonComplex/recipe/install.yaml
 yaml_read_files:
   # someyaml: someyaml.yaml
   # otheryaml: someotheryaml.yaml
