@@ -8,6 +8,11 @@
 
 ## Manual Testing Instructions
 
+```bash
+ddev add-on get https://github.com/<user>/<repo>/tarball/<branch>
+ddev restart
+```
+
 ## Automated Testing Overview
 
 <!-- Please describe the tests introduced by this PR, or explain why no tests are needed. -->
