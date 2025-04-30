@@ -82,4 +82,4 @@ ddev_version_constraint: '>= v1.24.3'" > install.yaml
 rm -f README_DEBUG.md
 rm -f .github/workflows/first-time-setup.yml
 rm -rf images
-rm -rf .github/scripts/first-time-setup.sh
+rm -rf .github/scripts
