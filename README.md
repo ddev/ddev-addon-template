@@ -29,7 +29,7 @@ This repository is a quick way to get started. You can create a new repo from th
 2. Name your repository using the `ddev-` prefix (e.g. `ddev-foobar`).
 3. Add a meaningful description with relevant keywords for discoverability.
 4. Click `Create repository` and wait ~1 minute for the automated `First time setup` commit.
-5. Clone your repository locally (use the green <> Code button for the URL).
+5. Clone your repository locally (use the green `<> Code` button for the URL).
 6. Prepare your add-on files and tests, see [Getting started](#getting-started) for details.
 7. Create a new PR for review and discussion (avoid committing directly to `main`, as that bypasses the collaborative process).
 8. Merge or squash your PR into `main` (squash is preferred for a cleaner commit history).
@@ -60,7 +60,7 @@ This repository is a quick way to get started. You can create a new repo from th
 8. Test manually with `ddev add-on get <owner/repo>`.
 9. You can test PRs with `ddev add-on get https://github.com/<user>/<repo>/tarball/<branch>` or `https://github.com/<user>/<repo>/tarball/refs/pull/<pr-number>/head`.
 10. You can test add-ons locally without GitHub by downloading them, making changes and running `ddev add-on get /path/to/add-on-directory`.
-11. Update the `README.md` to describe the add-on, how to use it, and how to contribute. If there are any manual actions that have to be taken, please explain them. If it requires special configuration of the using project, please explain how to do those. Examples in [ddev/ddev-solr](https://github.com/ddev/ddev-solr), [ddev/ddev-memcached](https://github.com/ddev/ddev-memcached), and (advanced) [ddev-platformsh](https://github.com/ddev/ddev-platformsh).
+11. Update the [`README.md`](./README_ADDON.md) to describe the add-on, how to use it, and how to contribute. If there are any manual actions that have to be taken, please explain them. If it requires special configuration of the using project, please explain how to do those. Examples in [ddev/ddev-solr](https://github.com/ddev/ddev-solr), [ddev/ddev-memcached](https://github.com/ddev/ddev-memcached), and (advanced) [ddev-platformsh](https://github.com/ddev/ddev-platformsh).
 12. Add a good short description to your repo, and add the `ddev-get` [topic](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics). It will immediately be added to the list provided by `ddev add-on list --all`.
 13. When it has matured you will hopefully want to have it become an "official" maintained add-on. Open an issue in the [DDEV queue](https://github.com/ddev/ddev/issues) for that.
 
@@ -77,4 +77,4 @@ See [full instructions](./README_DEBUG.md).
 
 ## Credits
 
-**Contributed and maintained by `@CONTRIBUTOR`**
+**Contributed and maintained by @CONTRIBUTOR**
