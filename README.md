@@ -3,14 +3,17 @@
 [![last commit](https://img.shields.io/github/last-commit/ddev/ddev-addon-template)](https://github.com/ddev/ddev-addon-template/commits)
 [![release](https://img.shields.io/github/v/release/ddev/ddev-addon-template)](https://github.com/ddev/ddev-addon-template/releases/latest)
 
-# DDEV add-on template <!-- omit in toc -->
+# DDEV Add-on Template <!-- omit in toc -->
 
-* [What is DDEV add-on template?](#what-is-ddev-add-on-template)
+* [What is DDEV Add-on Template?](#what-is-ddev-add-on-template)
+* [TL;DR](#tldr)
 * [Components of the repository](#components-of-the-repository)
 * [Getting started](#getting-started)
-* [How to debug in Github Actions](./README_DEBUG.md)
+* [How to debug in Github Actions](#how-to-debug-in-github-actions)
+* [Resources](#resources)
+* [Credits](#credits)
 
-## What is DDEV add-on template?
+## What is DDEV Add-on Template?
 
 This repository is a template for providing [DDEV](https://ddev.readthedocs.io) add-ons and services.
 
@@ -19,6 +22,19 @@ In DDEV, add-ons can be installed from the command line using the `ddev add-on g
 This repository is a quick way to get started. You can create a new repo from this one by clicking the template button in the top right corner of the page.
 
 ![template button](images/template-button.png)
+
+## TL;DR
+
+1. Click the green `Use this template button` (top right) > `Create a new repository`.
+2. Name your repository using the `ddev-` prefix (e.g. `ddev-foobar`).
+3. Add a meaningful description with relevant keywords for discoverability.
+4. Click `Create repository` and wait ~1 minute for the automated `First time setup` commit.
+5. Clone your repository locally (use the green <> Code button for the URL).
+6. Prepare your add-on files and tests, see [Getting started](#getting-started) for details.
+7. Create a new PR for review and discussion (avoid committing directly to `main`, as that bypasses the collaborative process).
+8. Merge or squash your PR into `main` (squash is preferred for a cleaner commit history).
+9. Create a new [release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).
+10. When ready to share, make your add-on discoverable by adding the `ddev-get` [topic](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics).
 
 ## Components of the repository
 
@@ -31,27 +47,34 @@ This repository is a quick way to get started. You can create a new repo from th
 
 1. Choose a good descriptive name for your add-on. It should probably start with "ddev-" and include the basic service or functionality. If it's particular to a specific CMS, perhaps `ddev-<CMS>-servicename`.
 2. Create the new template repository by using the template button.
-3. Globally replace "addon-template" with the name of your add-on.
-4. Add the files that need to be added to a DDEV project to the repository. For example, you might replace `docker-compose.addon-template.yaml` with the `docker-compose.*.yaml` for your recipe.
-5. Update the `install.yaml` to give the necessary instructions for installing the add-on:
+3. Add the files that need to be added to a DDEV project to the repository. If your add-on does not add a new service, remove `docker-compose.<addon-name>.yaml` file.
+4. Update the `install.yaml` to give the necessary instructions for installing the add-on:
 
    * The fundamental line is the `project_files` directive, a list of files to be copied from this repo into the project `.ddev` directory.
    * You can optionally add files to the `global_files` directive as well, which will cause files to be placed in the global `.ddev` directory, `~/.ddev`.
    * Finally, `pre_install_commands` and `post_install_commands` are supported. These can use the host-side environment variables documented [in DDEV docs](https://ddev.readthedocs.io/en/stable/users/extend/custom-commands/#environment-variables-provided).
 
-6. Update `tests/test.bats` to provide a reasonable test for your repository. Tests will run automatically on every push to the repository, and periodically each night. Please make sure to address test failures when they happen. Others will be depending on you. Bats is a testing framework that just uses Bash. To run a Bats test locally, you have to install [bats-core](https://bats-core.readthedocs.io/en/stable/installation.html) and its [libraries](https://github.com/ztombol/bats-docs) first. Then you download your add-on, and finally run `bats ./tests/test.bats` within the root of the uncompressed directory. To learn more about Bats see the [documentation](https://bats-core.readthedocs.io/en/stable/).
-7. When everything is working, including the tests, you can push the repository to GitHub.
-8. Create a [release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository) on GitHub.
-9. Test manually with `ddev add-on get <owner/repo>`.
-10. You can test PRs with `ddev add-on get https://github.com/<user>/<repo>/tarball/<branch>`.
-11. You can test add-ons locally without GitHub by downloading them, making changes and running `ddev add-on get /path/to/add-on-directory`.
-12. Update the `README.md` header, adding the machine name of the add-on, for example `# ddev-redis`, not `# DDEV Redis`.
-13. Update the `README.md` to describe the add-on, how to use it, and how to contribute. If there are any manual actions that have to be taken, please explain them. If it requires special configuration of the using project, please explain how to do those. Examples in [ddev/ddev-solr](https://github.com/ddev/ddev-solr), [ddev/ddev-memcached](https://github.com/ddev/ddev-memcached), and (advanced) [ddev-platformsh](https://github.com/ddev/ddev-platformsh).
-14. Add a good short description to your repo, and add the [topic](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics) "ddev-get". It will immediately be added to the list provided by `ddev add-on list --all`.
-15. When it has matured you will hopefully want to have it become an "official" maintained add-on. Open an issue in the [DDEV queue](https://github.com/ddev/ddev/issues) for that.
+5. Update `tests/test.bats` to provide a reasonable test for your repository. In most cases, you only need to modify the `health_checks()` function. Tests will run automatically on every push to the repository, and periodically each night. Please make sure to address test failures when they happen. Others will be depending on you. Bats is a testing framework that just uses Bash. To run a Bats test locally, you have to install [bats-core](https://bats-core.readthedocs.io/en/stable/installation.html) and its [libraries](https://github.com/ztombol/bats-docs) first. Then you download your add-on, and finally run `bats ./tests/test.bats` within the root of the uncompressed directory. To learn more about Bats see the [documentation](https://bats-core.readthedocs.io/en/stable/).
+6. When everything is working, including the tests, you can push the repository to GitHub.
+7. Create a [release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository) on GitHub.
+8. Test manually with `ddev add-on get <owner/repo>`.
+9. You can test PRs with `ddev add-on get https://github.com/<user>/<repo>/tarball/<branch>` or `https://github.com/<user>/<repo>/tarball/refs/pull/<pr-number>/head`.
+10. You can test add-ons locally without GitHub by downloading them, making changes and running `ddev add-on get /path/to/add-on-directory`.
+11. Update the `README.md` to describe the add-on, how to use it, and how to contribute. If there are any manual actions that have to be taken, please explain them. If it requires special configuration of the using project, please explain how to do those. Examples in [ddev/ddev-solr](https://github.com/ddev/ddev-solr), [ddev/ddev-memcached](https://github.com/ddev/ddev-memcached), and (advanced) [ddev-platformsh](https://github.com/ddev/ddev-platformsh).
+12. Add a good short description to your repo, and add the `ddev-get` [topic](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics). It will immediately be added to the list provided by `ddev add-on list --all`.
+13. When it has matured you will hopefully want to have it become an "official" maintained add-on. Open an issue in the [DDEV queue](https://github.com/ddev/ddev/issues) for that.
 
-Add-ons were covered in [DDEV Add-ons: Creating, maintaining, testing](https://www.youtube.com/watch?v=TmXqQe48iqE) (part of the [DDEV Contributor Live Training](https://ddev.com/blog/contributor-training)).
+## How to debug in Github Actions
 
-Note that more advanced techniques are discussed in [Advanced Add-On Techniques](https://ddev.com/blog/advanced-add-on-contributor-training/) and [DDEV docs](https://ddev.readthedocs.io/en/stable/users/extend/additional-services/).
+See [full instructions](./README_DEBUG.md).
+
+## Resources
+
+* [DDEV Add-ons: Creating, maintaining, testing](https://www.youtube.com/watch?v=TmXqQe48iqE) (part of the [DDEV Contributor Live Training](https://ddev.com/blog/contributor-training))
+* [Advanced Add-On Techniques](https://ddev.com/blog/advanced-add-on-contributor-training/)
+* [DDEV docs](https://ddev.readthedocs.io/en/stable/users/extend/additional-services/)
+* [DDEV Add-on Registry](https://addons.ddev.com/)
+
+## Credits
 
 **Contributed and maintained by `@CONTRIBUTOR`**

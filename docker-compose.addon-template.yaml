@@ -3,13 +3,13 @@
 services:
   addon-template:
     container_name: ddev-${DDEV_SITENAME}-addon-template
-    image: busybox:stable
+    image: ${ADDON_TEMPLATE_DOCKER_IMAGE:-busybox:stable}
     command: tail -f /dev/null
     restart: "no"
     # These labels ensure this service is discoverable by DDEV.
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
-      com.ddev.approot: $DDEV_APPROOT
+      com.ddev.approot: ${DDEV_APPROOT}
 
     volumes:
       - ".:/mnt/ddev_config"
