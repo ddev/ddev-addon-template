@@ -47,7 +47,6 @@ After installation, make sure to commit the \`.ddev\` directory to version contr
 To change the Docker image:
 
 \`\`\`bash
-
 ddev dotenv set .ddev/.env.$LOWERCASE_NAME --$LOWERCASE_NAME-docker-image="busybox:stable"
 ddev add-on get $FULL_REPO_NAME
 ddev restart
@@ -71,6 +70,7 @@ sed -i "s|ADDON_TEMPLATE_DOCKER_IMAGE|$ENV_VARIABLE_NAME_DOCKER_IMAGE|g" "docker
 
 sed -i "s|ddev/ddev-addon-template|$FULL_REPO_NAME|g" tests/test.bats
 sed -i "s|ddev/ddev-addon-template|$FULL_REPO_NAME|g" .github/PULL_REQUEST_TEMPLATE.md
+sed -i "s|Copyright \[yyyy\] \[name of copyright owner\]|Copyright $(date +'%Y') $USER_NAME|g" LICENSE
 
 echo "name: $LOWERCASE_NAME
 
@@ -82,4 +82,4 @@ ddev_version_constraint: '>= v1.24.3'" > install.yaml
 rm -f README_DEBUG.md
 rm -f .github/workflows/first-time-setup.yml
 rm -rf images
-rm -rf .github/scripts
+rm -rf .github/scripts/first-time-setup.sh
