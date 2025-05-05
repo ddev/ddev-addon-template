@@ -20,7 +20,7 @@ pre_install_actions:
   # You can also check for client DDEV version with ddev_version_constraint (see below).
   # - |
   #   #ddev-description:Checking DDEV version
-  #   if ! ( ddev debug capabilities 2>/dev/null | grep corepack >/dev/null 2>&1 ) ; then
+  #   if ! ( ${DDEV_EXECUTABLE} debug capabilities 2>/dev/null | grep corepack >/dev/null 2>&1 ) ; then
   #     echo "This add-on requires DDEV v1.23+ or higher, please upgrade." && exit 2
   #   fi
 
