@@ -1,0 +1,34 @@
+name: first-time-setup
+
+on:
+  push:
+    branches: [ main ]
+
+# Only keep latest run of this workflow and cancel any previous runs
+concurrency:
+  group: first-time-setup
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  first-time-setup:
+    if: ${{ !github.event.repository.is_template }}
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update files
+        run: ./.github/scripts/first-time-setup.sh "$GITHUB_REPOSITORY"
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "First time setup"
+          git push
