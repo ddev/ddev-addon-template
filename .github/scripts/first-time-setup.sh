@@ -41,7 +41,7 @@ update_tests_and_templates() {
 }
 
 update_license() {
-    sed -i "s|Copyright \[yyyy\] \[name of copyright owner\]|Copyright $(date +'%Y') $USER_NAME|g" LICENSE
+    sed -i "s|Copyright \[yyyy\]|Copyright $(date +'%Y')|g" LICENSE
 }
 
 create_install_yaml() {
