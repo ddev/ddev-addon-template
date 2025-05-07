@@ -72,6 +72,7 @@ See [full instructions](./README_DEBUG.md).
 
 * [DDEV Add-ons: Creating, maintaining, testing](https://www.youtube.com/watch?v=TmXqQe48iqE) (part of the [DDEV Contributor Live Training](https://ddev.com/blog/contributor-training))
 * [Advanced Add-On Techniques](https://ddev.com/blog/advanced-add-on-contributor-training/)
+* [DDEV Add-on Maintenance Guide](https://ddev.com/blog/ddev-add-on-maintenance-guide/)
 * [DDEV docs](https://ddev.readthedocs.io/en/stable/users/extend/additional-services/)
 * [DDEV Add-on Registry](https://addons.ddev.com/)
 
