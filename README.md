@@ -28,7 +28,11 @@ This repository is a quick way to get started. You can create a new repo from th
 1. Click the green `Use this template button` (top right) > `Create a new repository`.
 2. Name your repository using the `ddev-` prefix (e.g. `ddev-foobar`).
 3. Add a meaningful description with relevant keywords for discoverability.
-4. Click `Create repository` and wait ~1 minute for the automated `First time setup` commit.
+4. Click `Create repository` and wait for the automated `First time setup` commit.
+
+> [!NOTE]
+> Automated updates to the `README.md` happen in a minute or so after creation.
+
 5. Clone your repository locally (use the green `<> Code` button for the URL).
 6. Prepare your add-on files and tests, see [Getting started](#getting-started) for details.
 7. Create a new PR for review and discussion (avoid committing directly to `main`, as that bypasses the collaborative process).
