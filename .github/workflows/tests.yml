@@ -14,6 +14,11 @@ on:
         description: Debug with tmate
         required: false
         default: false
+      preserve_testdir:
+        type: boolean
+        description: Avoid deleting test directory
+        required: false
+        default: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -37,5 +42,6 @@ jobs:
           ddev_version: ${{ matrix.ddev_version }}
           token: ${{ secrets.GITHUB_TOKEN }}
           debug_enabled: ${{ github.event.inputs.debug_enabled }}
+          preserve_testdir: true
           addon_repository: ${{ env.GITHUB_REPOSITORY }}
           addon_ref: ${{ env.GITHUB_REF }}
