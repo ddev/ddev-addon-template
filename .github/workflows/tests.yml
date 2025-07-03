@@ -14,11 +14,6 @@ on:
         description: Debug with tmate
         required: false
         default: false
-      preserve_testdir:
-        type: boolean
-        description: Avoid deleting test directory
-        required: false
-        default: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
