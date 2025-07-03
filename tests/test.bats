@@ -55,7 +55,10 @@ health_checks() {
 teardown() {
   set -eu -o pipefail
   ddev delete -Oy ${PROJNAME} >/dev/null 2>&1
-  [ "${TESTDIR}" != "" ] && rm -rf ${TESTDIR}
+  # Persist TESTDIR when used in Github Actions. Useful for artifacts.
+  [ -z "${GITHUB_ENV:-}" ] || echo "TESTDIR=${TESTDIR}" >> "${GITHUB_ENV}"
+  # Avoid deleting TESTDIR when specified. See https://github.com/ddev/github-action-add-on-test
+  [ -n "${DDEV_PRESERVE_TESTDIR:-}" ] || [ -z "${TESTDIR}" ] || rm -rf "${TESTDIR}"
 }
 
 @test "install from directory" {
