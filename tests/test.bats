@@ -58,7 +58,7 @@ teardown() {
   # Persist TESTDIR if running inside GitHub Actions. Useful for uploading test result artifacts
   # See example at https://github.com/ddev/github-action-add-on-test#preserving-artifacts
   if [ -n "${GITHUB_ENV:-}" ]; then
-    echo "TESTDIR=${TESTDIR}" >> "${GITHUB_ENV}"
+    [ -e "${GITHUB_ENV:-}" ] && echo "TESTDIR=${HOME}/tmp/${PROJNAME}" >> "${GITHUB_ENV}"
   else
     [ "${TESTDIR}" != "" ] && rm -rf "${TESTDIR}"
   fi
