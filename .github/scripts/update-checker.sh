@@ -19,7 +19,8 @@ check_remove_file() {
 
 # Check README.md for required conditions
 check_readme() {
-    local readme="README.md" badge
+    local readme="README.md"
+    local badge
 
     if [[ -f "$readme" ]]; then
         # Check for 'ddev add-on get'
@@ -92,7 +93,7 @@ check_shebang() {
     while IFS= read -r -d '' file; do
         if [[ -f "$file" && -r "$file" ]]; then
             local first_line
-            first_line=$(head -n1 "$file")
+            first_line=$(head -n1 "$file" 2>/dev/null || echo "")
             if [[ "$first_line" == "#!/bin/bash" ]]; then
                 actions+=("$file should use '#!/usr/bin/env bash' instead of '#!/bin/bash'")
             fi
@@ -140,6 +141,11 @@ check_github_templates() {
 
 # Main function
 main() {
+    if [[ ! -f "install.yaml" ]]; then
+        echo "ERROR: run this script from the add-on root directory, install.yaml is missing" >&2
+        exit 1
+    fi
+
     # Check unnecessary files
     check_remove_file "README_DEBUG.md"
     check_remove_file "images/gh-tmate.jpg"
@@ -166,10 +172,10 @@ main() {
 
     # If any actions are needed, throw an error
     if [[ ${#actions[@]} -gt 0 ]]; then
-        echo "ERROR: Actions needed:"
+        echo "ERROR: Actions needed:" >&2
         local action
         for action in "${actions[@]}"; do
-            echo "- $action"
+            echo "- $action" >&2
         done
         exit 1
     else
