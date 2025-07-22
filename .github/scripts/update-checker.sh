@@ -19,7 +19,7 @@ check_remove_file() {
 
 # Check README.md for required conditions
 check_readme() {
-    local readme="README.md"
+    local readme="README.md" badge
 
     if [[ -f "$readme" ]]; then
         # Check for 'ddev add-on get'
@@ -86,6 +86,34 @@ check_test_bats() {
     fi
 }
 
+# Check for correct shebang in commands/**/* files
+check_shebang() {
+    local file
+    while IFS= read -r -d '' file; do
+        if [[ -f "$file" && -r "$file" ]]; then
+            local first_line
+            first_line=$(head -n1 "$file")
+            if [[ "$first_line" == "#!/bin/bash" ]]; then
+                actions+=("$file should use '#!/usr/bin/env bash' instead of '#!/bin/bash'")
+            fi
+        fi
+    done < <(find commands -type f -print0 2>/dev/null || true)
+}
+
+# Check .github/workflows/tests.yml for required conditions
+check_tests_workflow() {
+    local tests_yml=".github/workflows/tests.yml"
+    
+    if [[ -f "$tests_yml" ]]; then
+        # Check for ddev/github-action-add-on-test@v2
+        if ! grep -q "ddev/github-action-add-on-test@v2" "$tests_yml"; then
+            actions+=("$tests_yml should use 'ddev/github-action-add-on-test@v2', see upstream file $UPSTREAM/$tests_yml")
+        fi
+    else
+        actions+=("$tests_yml is missing, see upstream file $UPSTREAM/$tests_yml")
+    fi
+}
+
 # Check for required GitHub template files
 check_github_templates() {
     local templates=(
@@ -93,6 +121,7 @@ check_github_templates() {
         ".github/ISSUE_TEMPLATE/feature_request.yml"
         ".github/PULL_REQUEST_TEMPLATE.md"
     )
+    local template
 
     for template in "${templates[@]}"; do
         if [[ ! -f "$template" ]]; then
@@ -126,12 +155,19 @@ main() {
     # Check tests/test.bats for conditions
     check_test_bats
 
+    # Check shebang in commands/**/* files
+    check_shebang
+
+    # Check tests workflow
+    check_tests_workflow
+
     # Check GitHub templates
     check_github_templates
 
     # If any actions are needed, throw an error
     if [[ ${#actions[@]} -gt 0 ]]; then
         echo "ERROR: Actions needed:"
+        local action
         for action in "${actions[@]}"; do
             echo "- $action"
         done
