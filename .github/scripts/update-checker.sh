@@ -74,7 +74,7 @@ check_test_bats() {
 
     if [[ -f "$test_bats" ]]; then
         # Check for test_tags=release
-        if ! grep -q "# bats test_tags=release" "$test_bats"; then
+        if grep -q "install from release" "$test_bats" && ! grep -q "# bats test_tags=release" "$test_bats"; then
             actions+=("$test_bats should contain '# bats test_tags=release', see upstream file $UPSTREAM/$test_bats")
         fi
 
