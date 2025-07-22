@@ -17,11 +17,12 @@ pre_install_actions:
 
   # - "docker volume rm ddev-${DDEV_PROJECT}_solr 2>/dev/null || true"
 
-  # You can also check for client DDEV version with ddev_version_constraint (see below).
+  # Use this example to perform different actions based on the DDEV version.
+  # If you only need a version constraint, use ddev_version_constraint instead (see below).
   # - |
-  #   #ddev-description:Checking DDEV version
-  #   if ! ( ddev debug capabilities 2>/dev/null | grep corepack >/dev/null 2>&1 ) ; then
-  #     echo "This add-on requires DDEV v1.23+ or higher, please upgrade." && exit 2
+  #   #ddev-description:Show a message for v1.24.7+
+  #   if ${DDEV_EXECUTABLE} debug match-constraint ">= 1.24.7" 2>/dev/null ; then
+  #     echo "Using DDEV v1.24.7+, running extra actions..."
   #   fi
 
   # - 'echo "what is your platform.sh token" && read x'
