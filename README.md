@@ -30,8 +30,8 @@ This repository is a quick way to get started. You can create a new repo from th
 3. Add a meaningful description with relevant keywords for discoverability.
 4. Click `Create repository` and wait for the automated `First time setup` commit.
 
-> [!NOTE]
-> Automated updates to the `README.md` happen in a minute or so after creation.
+   > [!NOTE]
+   > Automated updates to the `README.md` happen in a minute or so after creation.
 
 5. Clone your repository locally (use the green `<> Code` button for the URL).
 6. Prepare your add-on files and tests, see [Getting started](#getting-started) for details.
@@ -39,6 +39,13 @@ This repository is a quick way to get started. You can create a new repo from th
 8. Merge or squash your PR into `main` (squash is preferred for a cleaner commit history).
 9. Create a new [release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).
 10. When ready to share, make your add-on discoverable by adding the `ddev-get` [topic](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics).
+
+> [!TIP]
+> Run update script in your add-on to ensure it is up-to-date:
+>
+> ```bash
+> curl -fsSL https://raw.githubusercontent.com/ddev/ddev-addon-template/main/.github/scripts/update-checker.sh | bash
+> ```
 
 ## Components of the repository
 
@@ -68,7 +75,7 @@ This repository is a quick way to get started. You can create a new repo from th
 12. Add a good short description to your repo, and add the `ddev-get` [topic](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics). It will immediately be added to the list provided by `ddev add-on list --all`.
 13. When it has matured you will hopefully want to have it become an "official" maintained add-on. Open an issue in the [DDEV queue](https://github.com/ddev/ddev/issues) for that.
 
-## How to debug in Github Actions
+## How to debug in GitHub Actions
 
 See [full instructions](./README_DEBUG.md).
 
