@@ -41,7 +41,7 @@ This repository is a quick way to get started. You can create a new repo from th
 10. When ready to share, make your add-on discoverable by adding the `ddev-get` [topic](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics).
 
 > [!TIP]
-> Run the update checker in your add-on to ensure it is up to date:
+> Run the `update-checker.sh` in your add-on to ensure it is up to date:
 >
 > ```bash
 > curl -fsSL https://raw.githubusercontent.com/ddev/ddev-addon-template/main/.github/scripts/update-checker.sh | bash
