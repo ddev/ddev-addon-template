@@ -115,6 +115,20 @@ check_tests_workflow() {
     fi
 }
 
+# Check docker-compose.*.yaml files for 'build:' with 'image:' usage
+check_docker_compose_yaml() {
+    local file
+    while IFS= read -r -d '' file; do
+        if [[ -f "$file" && -r "$file" ]]; then
+            if grep -q "build:" "$file" && ! grep -q "image:" "$file"; then
+                actions+=("$file contains 'build:', but there is no 'image:', example: 'image: \${ADDON_TEMPLATE_DOCKER_IMAGE:-busybox:stable}-\${DDEV_SITENAME}-built', this is required to use DDEV offline")
+            elif grep -q "build:" "$file" && grep -q "image:" "$file" && ! grep -Eq "image:.*-\\\$\{DDEV_SITENAME\}-built" "$file"; then
+                actions+=("$file contains both 'build:' and 'image:', but 'image:' line should contain '-\${DDEV_SITENAME}-built', example: 'image: \${ADDON_TEMPLATE_DOCKER_IMAGE:-busybox:stable}-\${DDEV_SITENAME}-built', this is required to use DDEV offline")
+            fi
+        fi
+    done < <(find . -name "docker-compose.*.yaml" -print0 2>/dev/null || true)
+}
+
 # Check for required GitHub template files
 check_github_templates() {
     local templates=(
@@ -147,6 +161,7 @@ main() {
     fi
 
     # Check unnecessary files
+    check_remove_file "README_ADDON.md"
     check_remove_file "README_DEBUG.md"
     check_remove_file "images/gh-tmate.jpg"
     check_remove_file "images/template--button.png"
@@ -157,6 +172,9 @@ main() {
 
     # Check install.yaml for conditions
     check_install_yaml
+
+    # Check docker-compose.*.yaml for conditions
+    check_docker_compose_yaml
 
     # Check tests/test.bats for conditions
     check_test_bats
