@@ -5,7 +5,7 @@
 
 # DDEV Add-on Template <!-- omit in toc -->
 
-* [What is DDEV Add-on Template?](#what-is-ddev-add-on-template)\
+* [What is DDEV Add-on Template?](#what-is-ddev-add-on-template)
 * [Update Checker](#update-checker)
 * [TL;DR](#tldr)
 * [Components of the repository](#components-of-the-repository)
