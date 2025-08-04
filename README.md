@@ -6,6 +6,7 @@
 # DDEV Add-on Template <!-- omit in toc -->
 
 * [What is DDEV Add-on Template?](#what-is-ddev-add-on-template)
+* [Update Checker](#update-checker)
 * [TL;DR](#tldr)
 * [Components of the repository](#components-of-the-repository)
 * [Getting started](#getting-started)
@@ -23,6 +24,14 @@ This repository is a quick way to get started. You can create a new repo from th
 
 ![template button](images/template-button.png)
 
+## Update Checker
+
+Run the update checker script periodically in your add-on to verify it is up to date:
+
+```bash
+curl -fsSL https://ddev.com/s/addon-update-checker.sh | bash
+```
+
 ## TL;DR
 
 1. Click the green `Use this template button` (top right) > `Create a new repository`.
@@ -39,13 +48,6 @@ This repository is a quick way to get started. You can create a new repo from th
 8. Merge or squash your PR into `main` (squash is preferred for a cleaner commit history).
 9. Create a new [release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).
 10. When ready to share, make your add-on discoverable by adding the `ddev-get` [topic](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics).
-
-> [!TIP]
-> Run the `update-checker.sh` in your add-on to ensure it is up to date:
->
-> ```bash
-> curl -fsSL https://raw.githubusercontent.com/ddev/ddev-addon-template/main/.github/scripts/update-checker.sh | bash
-> ```
 
 ## Components of the repository
 

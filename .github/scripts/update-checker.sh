@@ -55,8 +55,8 @@ check_install_yaml() {
 
     if [[ -f "$install_yaml" ]]; then
         # Check for ddev_version_constraint
-        if ! grep -q "ddev_version_constraint: '>= v1.24.3'" "$install_yaml"; then
-            actions+=("install.yaml should contain 'ddev_version_constraint: \">= v1.24.3\"', see upstream file $UPSTREAM/$install_yaml")
+        if ! grep -q "^ddev_version_constraint: '>= v1\.24\.[3-9][0-9]*'" "$install_yaml" && ! grep -q "^ddev_version_constraint: '>= v1\.2[5-9]\." "$install_yaml"; then
+            actions+=("install.yaml should contain 'ddev_version_constraint: \">= v1.24.3\"' or higher, see upstream file $UPSTREAM/$install_yaml")
         fi
 
         # Check for addon-template
@@ -104,7 +104,7 @@ check_shebang() {
 # Check .github/workflows/tests.yml for required conditions
 check_tests_workflow() {
     local tests_yml=".github/workflows/tests.yml"
-    
+
     if [[ -f "$tests_yml" ]]; then
         # Check for ddev/github-action-add-on-test@v2
         if ! grep -q "ddev/github-action-add-on-test@v2" "$tests_yml"; then
