@@ -110,6 +110,10 @@ check_tests_workflow() {
         if ! grep -q "ddev/github-action-add-on-test@v2" "$tests_yml"; then
             actions+=("$tests_yml should use 'ddev/github-action-add-on-test@v2', see upstream file $UPSTREAM/$tests_yml")
         fi
+        # Check for paths-ignore
+        if ! grep -q "paths-ignore" "$tests_yml"; then
+            actions+=("$tests_yml should have 'paths-ignore' for markdown, see upstream file $UPSTREAM/$tests_yml")
+        fi
     else
         actions+=("$tests_yml is missing, see upstream file $UPSTREAM/$tests_yml")
     fi
