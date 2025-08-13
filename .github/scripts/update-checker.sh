@@ -177,6 +177,19 @@ check_addon_template_mentions() {
     done
 }
 
+# Check LICENSE file for Apache License
+check_license() {
+    local license_file="LICENSE"
+    
+    if [[ -f "$license_file" ]]; then
+        if ! grep -q "Apache License" "$license_file"; then
+            actions+=("LICENSE should contain 'Apache License', see upstream file $UPSTREAM/$license_file")
+        fi
+    else
+        actions+=("LICENSE is missing, see upstream file $UPSTREAM/$license_file")
+    fi
+}
+
 # Main function
 main() {
     if [[ ! -f "install.yaml" ]]; then
@@ -185,11 +198,14 @@ main() {
     fi
 
     # Check unnecessary files
+    check_remove_file "docker-compose.addon-template.yaml"
     check_remove_file "README_ADDON.md"
     check_remove_file "README_DEBUG.md"
     check_remove_file "images/gh-tmate.jpg"
-    check_remove_file "images/template--button.png"
-    check_remove_file "docker-compose.addon-template.yaml"
+    check_remove_file "images/template-button.png"
+    check_remove_file ".github/scripts/first-time-setup.sh"
+    check_remove_file ".github/scripts/update-checker.sh"
+    check_remove_file ".github/workflows/first-time-setup.yml"
 
     # Check README.md for conditions
     check_readme
@@ -214,6 +230,9 @@ main() {
 
     # Check for addon-template mentions
     check_addon_template_mentions
+
+    # Check LICENSE file
+    check_license
 
     # If any actions are needed, throw an error
     if [[ ${#actions[@]} -gt 0 ]]; then
