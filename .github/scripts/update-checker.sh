@@ -157,6 +157,26 @@ check_github_templates() {
     fi
 }
 
+# Check all files for "addon-template" mentions
+check_addon_template_mentions() {
+    local file
+    for file in install.yaml README.md docker-compose.*.yaml tests/test.bats .github/PULL_REQUEST_TEMPLATE.md; do
+        if [[ -f "$file" ]]; then
+            if grep -q "ddev/ddev-addon-template" "$file"; then
+                actions+=("Replace 'ddev/ddev-addon-template' mentions with your add-on name in: $file")
+            elif grep -q "addon-template" "$file"; then
+                actions+=("Replace 'addon-template' mentions with your add-on name in: $file")
+            fi
+            if grep -q "ADDON_TEMPLATE" "$file"; then
+                actions+=("Replace 'ADDON_TEMPLATE' mentions with your add-on name in: $file")
+            fi
+            if grep -q "Add-on Template" "$file"; then
+                actions+=("Replace 'Add-on Template' mentions with your add-on name in: $file")
+            fi
+        fi
+    done
+}
+
 # Main function
 main() {
     if [[ ! -f "install.yaml" ]]; then
@@ -191,6 +211,9 @@ main() {
 
     # Check GitHub templates
     check_github_templates
+
+    # Check for addon-template mentions
+    check_addon_template_mentions
 
     # If any actions are needed, throw an error
     if [[ ${#actions[@]} -gt 0 ]]; then
