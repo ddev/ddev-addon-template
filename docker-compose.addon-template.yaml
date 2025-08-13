@@ -1,9 +1,8 @@
 #ddev-generated
-# Simple template to demonstrate addon-template
 services:
   addon-template:
     container_name: ddev-${DDEV_SITENAME}-addon-template
-    image: ${ADDON_TEMPLATE_DOCKER_IMAGE:-busybox:stable}
+    image: ${ADDON_TEMPLATE_DOCKER_IMAGE:-ddev/ddev-utilities:latest}
     command: tail -f /dev/null
     restart: "no"
     # These labels ensure this service is discoverable by DDEV.

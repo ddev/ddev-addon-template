@@ -125,9 +125,9 @@ check_docker_compose_yaml() {
     while IFS= read -r -d '' file; do
         if [[ -f "$file" && -r "$file" ]]; then
             if grep -q "build:" "$file" && ! grep -q "image:" "$file"; then
-                actions+=("$file contains 'build:', but there is no 'image:', example: 'image: \${ADDON_TEMPLATE_DOCKER_IMAGE:-busybox:stable}-\${DDEV_SITENAME}-built', this is required to use DDEV offline")
+                actions+=("$file contains 'build:', but there is no 'image:', example: 'image: \${ADDON_TEMPLATE_DOCKER_IMAGE:-ddev/ddev-utilities:latest}-\${DDEV_SITENAME}-built', this is required to use DDEV offline")
             elif grep -q "build:" "$file" && grep -q "image:" "$file" && ! grep -Eq "image:.*-\\\$\{DDEV_SITENAME\}-built" "$file"; then
-                actions+=("$file contains both 'build:' and 'image:', but 'image:' line should contain '-\${DDEV_SITENAME}-built', example: 'image: \${ADDON_TEMPLATE_DOCKER_IMAGE:-busybox:stable}-\${DDEV_SITENAME}-built', this is required to use DDEV offline")
+                actions+=("$file contains both 'build:' and 'image:', but 'image:' line should contain '-\${DDEV_SITENAME}-built', example: 'image: \${ADDON_TEMPLATE_DOCKER_IMAGE:-ddev/ddev-utilities:latest}-\${DDEV_SITENAME}-built', this is required to use DDEV offline")
             fi
         fi
     done < <(find . -name "docker-compose.*.yaml" -print0 2>/dev/null || true)
