@@ -30,7 +30,7 @@ After installation, make sure to commit the `.ddev` directory to version control
 To change the Docker image:
 
 ```bash
-ddev dotenv set .ddev/.env.addon-template --addon-template-docker-image="busybox:stable"
+ddev dotenv set .ddev/.env.addon-template --addon-template-docker-image="ddev/ddev-utilities:latest"
 ddev add-on get ddev/ddev-addon-template
 ddev restart
 ```
@@ -41,7 +41,7 @@ All customization options (use with caution):
 
 | Variable | Flag | Default |
 | -------- | ---- | ------- |
-| `ADDON_TEMPLATE_DOCKER_IMAGE` | `--addon-template-docker-image` | `busybox:stable` |
+| `ADDON_TEMPLATE_DOCKER_IMAGE` | `--addon-template-docker-image` | `ddev/ddev-utilities:latest` |
 
 ## Credits
 
