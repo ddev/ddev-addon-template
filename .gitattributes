@@ -1,0 +1,2 @@
+# Exclude tests directory from releases/tarballs
+tests/ export-ignore

@@ -190,6 +190,19 @@ check_license() {
     fi
 }
 
+# Check .gitattributes
+check_gitattributes() {
+  local gitattributes=".gitattributes"
+
+  if [[ -f "$gitattributes" ]]; then
+    if ! grep -q "tests" "$gitattributes"; then
+      actions+=("$gitattributes should contain 'tests', see upstream file $UPSTREAM/$gitattributes")
+    fi
+  else
+    actions+=("$gitattributes is missing, see upstream file $UPSTREAM/$gitattributes")
+  fi
+}
+
 # Main function
 main() {
     if [[ ! -f "install.yaml" ]]; then
@@ -233,6 +246,9 @@ main() {
 
     # Check LICENSE file
     check_license
+  
+    # Check .gitattributes
+    check_gitattributes
 
     # If any actions are needed, throw an error
     if [[ ${#actions[@]} -gt 0 ]]; then
