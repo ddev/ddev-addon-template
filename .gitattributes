@@ -1,2 +1,4 @@
-# Exclude tests directory from releases/tarballs
+# Exclude files from releases/tarballs
 tests/ export-ignore
+.github/ export-ignore
+.gitattributes export-ignore
