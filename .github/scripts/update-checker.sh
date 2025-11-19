@@ -262,16 +262,6 @@ check_file_formatting() {
     local file
     # Get all tracked files from git, excluding binary files and specific patterns
     while IFS= read -r -d '' file; do
-        # Skip if file doesn't exist, isn't readable, or is empty
-        if [[ ! -f "$file" || ! -r "$file" || ! -s "$file" ]]; then
-            continue
-        fi
-
-        # Skip tests/testdata directory
-        if [[ "$file" == tests/testdata/* ]]; then
-            continue
-        fi
-
         # Skip binary files and images
         if file "$file" 2>/dev/null | grep -qE "image|binary|executable|archive"; then
             continue
@@ -286,7 +276,7 @@ check_file_formatting() {
         if grep -qn '^[[:space:]]\+$' "$file" 2>/dev/null; then
             actions+=("$file contains lines with only spaces/tabs, remove trailing whitespace")
         fi
-    done < <(git ls-files -z 2>/dev/null || find . -type f -not -path './.git/*' -print0 2>/dev/null)
+    done < <(git ls-files -z 2>/dev/null | grep -zv '^tests/testdata/' || find . -type f -not -path './.git/*' -not -path './tests/testdata/*' -print0 2>/dev/null)
 }
 
 # Main function
