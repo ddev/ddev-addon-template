@@ -109,6 +109,31 @@ check_test_bats() {
         if ! grep -q "ddev add-on get" "$test_bats"; then
             actions+=("$test_bats should contain 'ddev add-on get', see upstream file $UPSTREAM/$test_bats")
         fi
+
+        # Check for GITHUB_ENV usage
+        if ! grep -q "GITHUB_ENV" "$test_bats"; then
+            actions+=("$test_bats should use GITHUB_ENV in teardown() function, see upstream file $UPSTREAM/$test_bats")
+        fi
+
+        # Check for DDEV_NONINTERACTIVE=true
+        if ! grep -q "DDEV_NONINTERACTIVE=true" "$test_bats"; then
+            actions+=("$test_bats should set DDEV_NONINTERACTIVE=true, see upstream file $UPSTREAM/$test_bats")
+        fi
+
+        # Check for DDEV_NO_INSTRUMENTATION=true
+        if ! grep -q "DDEV_NO_INSTRUMENTATION=true" "$test_bats"; then
+            actions+=("$test_bats should set DDEV_NO_INSTRUMENTATION=true, see upstream file $UPSTREAM/$test_bats")
+        fi
+
+        # Check for GITHUB_REPO
+        if ! grep -q "GITHUB_REPO" "$test_bats"; then
+            actions+=("$test_bats should define GITHUB_REPO, see upstream file $UPSTREAM/$test_bats")
+        fi
+
+        # Check for bats_load_library
+        if ! grep -q "bats_load_library" "$test_bats"; then
+            actions+=("$test_bats should use bats_load_library, see upstream file $UPSTREAM/$test_bats")
+        fi
     else
         actions+=("$test_bats is missing, see upstream file $UPSTREAM/$test_bats")
     fi
@@ -232,8 +257,8 @@ check_gitattributes() {
   fi
 }
 
-# Check for trailing newline in all files
-check_trailing_newline() {
+# Check for trailing newline and whitespace-only lines in all files
+check_file_formatting() {
     local file
     # Get all tracked files from git, excluding binary files and specific patterns
     while IFS= read -r -d '' file; do
@@ -250,6 +275,11 @@ check_trailing_newline() {
         # Check if file ends with a newline
         if [[ -n "$(tail -c 1 "$file" 2>/dev/null)" ]]; then
             actions+=("$file should have an empty line at the end")
+        fi
+
+        # Check for lines containing only whitespace
+        if grep -qn '^[[:space:]]\+$' "$file" 2>/dev/null; then
+            actions+=("$file contains lines with only spaces/tabs, remove trailing whitespace")
         fi
     done < <(git ls-files -z 2>/dev/null || find . -type f -not -path './.git/*' -print0 2>/dev/null)
 }
@@ -301,8 +331,8 @@ main() {
     # Check .gitattributes
     check_gitattributes
 
-    # Check for trailing newline in files
-    check_trailing_newline
+    # Check file formatting
+    check_file_formatting
 
     # If any actions are needed, throw an error
     if [[ ${#actions[@]} -gt 0 ]]; then
