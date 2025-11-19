@@ -5,6 +5,9 @@ set -o nounset
 
 UPSTREAM=https://github.com/ddev/ddev-addon-template/blob/main
 
+# List to store info messages
+info_messages=()
+
 # List to store actions
 actions=()
 
@@ -95,47 +98,58 @@ check_install_yaml() {
     fi
 }
 
-# Check tests/test.bats for required conditions
+# Check tests/*.bats for required conditions
 check_test_bats() {
     local test_bats="tests/test.bats"
+    local bats_files
 
+    # Find any .bats files in tests directory
+    mapfile -t bats_files < <(find tests -maxdepth 1 -name "*.bats" -type f 2>/dev/null)
+
+    if [[ ${#bats_files[@]} -eq 0 ]]; then
+        actions+=("tests/ directory should contain at least one .bats test file, see upstream file $UPSTREAM/tests/test.bats")
+        return
+    fi
+
+    # If tests/test.bats exists, check it for required content
     if [[ -f "$test_bats" ]]; then
         # Check for test_tags=release
         if grep -q "install from release" "$test_bats" && ! grep -q "# bats test_tags=release" "$test_bats"; then
-            actions+=("$test_bats should contain '# bats test_tags=release', see upstream file $UPSTREAM/$test_bats")
+            actions+=("$test_bats should contain '# bats test_tags=release', see upstream file $UPSTREAM/tests/test.bats")
         fi
 
         # Check for ddev add-on get
         if ! grep -q "ddev add-on get" "$test_bats"; then
-            actions+=("$test_bats should contain 'ddev add-on get', see upstream file $UPSTREAM/$test_bats")
+            actions+=("$test_bats should contain 'ddev add-on get', see upstream file $UPSTREAM/tests/test.bats")
         fi
 
         # Check for GITHUB_ENV usage
         if ! grep -q "GITHUB_ENV" "$test_bats"; then
-            actions+=("$test_bats should use GITHUB_ENV in teardown() function, see upstream file $UPSTREAM/$test_bats")
+            actions+=("$test_bats should use GITHUB_ENV in teardown() function, see upstream file $UPSTREAM/tests/test.bats")
         fi
 
         # Check for DDEV_NONINTERACTIVE=true
         if ! grep -q "DDEV_NONINTERACTIVE=true" "$test_bats"; then
-            actions+=("$test_bats should set DDEV_NONINTERACTIVE=true, see upstream file $UPSTREAM/$test_bats")
+            actions+=("$test_bats should set DDEV_NONINTERACTIVE=true, see upstream file $UPSTREAM/tests/test.bats")
         fi
 
         # Check for DDEV_NO_INSTRUMENTATION=true
         if ! grep -q "DDEV_NO_INSTRUMENTATION=true" "$test_bats"; then
-            actions+=("$test_bats should set DDEV_NO_INSTRUMENTATION=true, see upstream file $UPSTREAM/$test_bats")
+            actions+=("$test_bats should set DDEV_NO_INSTRUMENTATION=true, see upstream file $UPSTREAM/tests/test.bats")
         fi
 
         # Check for GITHUB_REPO
         if ! grep -q "GITHUB_REPO" "$test_bats"; then
-            actions+=("$test_bats should define GITHUB_REPO, see upstream file $UPSTREAM/$test_bats")
+            actions+=("$test_bats should define GITHUB_REPO, see upstream file $UPSTREAM/tests/test.bats")
         fi
 
         # Check for bats_load_library
         if ! grep -q "bats_load_library" "$test_bats"; then
-            actions+=("$test_bats should use bats_load_library, see upstream file $UPSTREAM/$test_bats")
+            actions+=("$test_bats should use bats_load_library, see upstream file $UPSTREAM/tests/test.bats")
         fi
     else
-        actions+=("$test_bats is missing, see upstream file $UPSTREAM/$test_bats")
+        # Warn if using non-standard test files
+        info_messages+=("$test_bats not found, skipping detailed checks. Found test files: ${bats_files[*]}")
     fi
 }
 
@@ -205,8 +219,8 @@ check_github_templates() {
     # Check PULL_REQUEST_TEMPLATE.md for the forbidden exact link
     local pr_template=".github/PULL_REQUEST_TEMPLATE.md"
     if [[ -f "$pr_template" ]]; then
-        if grep -q "https://github.com/<user>/<repo>/tarball/<branch>" "$pr_template"; then
-            actions+=("PULL_REQUEST_TEMPLATE.md should not contain 'https://github.com/<user>/<repo>/tarball/<branch>', see upstream file $UPSTREAM/$pr_template?plain=1")
+        if ! grep -q "REPLACE_ME_WITH_THIS_PR_NUMBER" "$pr_template"; then
+            actions+=("PULL_REQUEST_TEMPLATE.md should contain 'ddev add-on get https://github.com/<your-name>/<your-repo>/tarball/refs/pull/REPLACE_ME_WITH_THIS_PR_NUMBER/head', see upstream file $UPSTREAM/$pr_template?plain=1")
         fi
     fi
 }
@@ -328,6 +342,15 @@ main() {
 
     # Check file formatting
     check_file_formatting
+
+    # Display info messages if any
+    if [[ ${#info_messages[@]} -gt 0 ]]; then
+        echo "INFO:" >&2
+        local info
+        for info in "${info_messages[@]}"; do
+            echo "- $info" >&2
+        done
+    fi
 
     # If any actions are needed, throw an error
     if [[ ${#actions[@]} -gt 0 ]]; then
