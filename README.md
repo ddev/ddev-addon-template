@@ -69,7 +69,20 @@ curl -fsSL https://ddev.com/s/addon-update-checker.sh | bash
    * Make sure to have the `ddev_version_constraint` directive, to keep the add-on users up to date.
    * Finally, `pre_install_commands` and `post_install_commands` are supported. These can use the host-side environment variables documented [in DDEV docs](https://ddev.readthedocs.io/en/stable/users/extend/custom-commands/#environment-variables-provided).
 
-5. Update `tests/test.bats` to provide a reasonable test for your repository. In most cases, you only need to modify the `health_checks()` function. Tests will run automatically on every push to the repository, and periodically each night. Please make sure to address test failures when they happen. Others will be depending on you. Bats is a testing framework that just uses Bash. To run a Bats test locally, you have to install [bats-core](https://bats-core.readthedocs.io/en/stable/installation.html) and its [libraries](https://github.com/ztombol/bats-docs) first. Then you download your add-on, and finally run `bats ./tests/test.bats` within the root of the uncompressed directory. To learn more about Bats see the [documentation](https://bats-core.readthedocs.io/en/stable/).
+5. Update `tests/test.bats` to provide a reasonable test for your repository:
+
+   * In most cases, you only need to modify the `health_checks()` function and update the `GITHUB_REPO` variable to match your repository.
+   * Tests will run automatically on every push to the repository, and periodically each night.
+   * Please make sure to address test failures when they happen. Others will be depending on you.
+   * Bats is a testing framework that just uses Bash. To run a Bats test locally, you have to install [bats-core](https://bats-core.readthedocs.io/en/stable/installation.html) and its [libraries](https://github.com/ztombol/bats-docs) first.
+   * Then you download your add-on, and finally run `bats ./tests/test.bats` within the root of the uncompressed directory.
+   * To learn more about Bats see the [documentation](https://bats-core.readthedocs.io/en/stable/).
+   * For complex test scenarios, you can use `tests/testdata/` directory to store test fixtures. See examples in:
+     * [ddev-cypress](https://github.com/ddev/ddev-cypress/tree/main/tests)
+     * [ddev-rabbitmq](https://github.com/ddev/ddev-rabbitmq/tree/main/tests)
+     * [ddev-typo3-solr](https://github.com/ddev/ddev-typo3-solr/tree/main/tests)
+     * [ddev-upsun](https://github.com/ddev/ddev-upsun/tree/main/tests)
+
 6. When everything is working, including the tests, you can push the repository to GitHub.
 7. Create a [release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository) on GitHub.
 8. Test manually with `ddev add-on get <owner/repo>`.
