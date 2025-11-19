@@ -55,8 +55,13 @@ check_readme() {
 check_install_yaml() {
     local install_yaml="install.yaml"
 
+    # Minimum required DDEV version v1.24.10
+    local min_ddev_major=1
+    local min_ddev_minor=24
+    local min_ddev_patch=10
+
     if [[ -f "$install_yaml" ]]; then
-        # Check for ddev_version_constraint >= v1.24.10
+        # Check for ddev_version_constraint >= minimum required version
         local has_valid_version=false
         if grep -q "^ddev_version_constraint:" "$install_yaml"; then
             # Extract the version number from the constraint (handles both single and double quotes)
@@ -71,17 +76,17 @@ check_install_yaml() {
                 minor=${minor:-0}
                 patch=${patch:-0}
 
-                # Check if version is >= 1.24.10
-                if (( major > 1 )) || \
-                   (( major == 1 && minor > 24 )) || \
-                   (( major == 1 && minor == 24 && patch >= 10 )); then
+                # Check if version is >= minimum required version
+                if (( major > min_ddev_major )) || \
+                   (( major == min_ddev_major && minor > min_ddev_minor )) || \
+                   (( major == min_ddev_major && minor == min_ddev_minor && patch >= min_ddev_patch )); then
                     has_valid_version=true
                 fi
             fi
         fi
 
         if [[ "$has_valid_version" != "true" ]]; then
-            actions+=("install.yaml should contain \`ddev_version_constraint: '>= v1.24.10'\` or higher, see upstream file $UPSTREAM/$install_yaml")
+            actions+=("install.yaml should contain \`ddev_version_constraint: '>= v${min_ddev_major}.${min_ddev_minor}.${min_ddev_patch}'\` or higher, see upstream file $UPSTREAM/$install_yaml")
         fi
 
         # Check for addon-template
