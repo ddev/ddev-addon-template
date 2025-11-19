@@ -267,6 +267,11 @@ check_file_formatting() {
             continue
         fi
 
+        # Skip tests/testdata directory
+        if [[ "$file" == tests/testdata/* ]]; then
+            continue
+        fi
+
         # Skip binary files and images
         if file "$file" 2>/dev/null | grep -qE "image|binary|executable|archive"; then
             continue
