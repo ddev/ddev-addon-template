@@ -82,7 +82,7 @@ global_files:
 # and prevent add-on from being installed if it doesn't validate.
 # See https://github.com/Masterminds/semver#checking-version-constraints for constraint rules.
 # Available with DDEV v1.23.4+, and works only for DDEV v1.23.4+ binaries
-ddev_version_constraint: '>= v1.24.3'
+ddev_version_constraint: '>= v1.24.10'
 
 # List of add-on names that this add-on depends on
 dependencies:

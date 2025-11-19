@@ -2,7 +2,6 @@
 
 set -o errexit
 set -o nounset
-set -o pipefail
 
 UPSTREAM=https://github.com/ddev/ddev-addon-template/blob/main
 
@@ -54,14 +53,42 @@ check_install_yaml() {
     local install_yaml="install.yaml"
 
     if [[ -f "$install_yaml" ]]; then
-        # Check for ddev_version_constraint
-        if ! grep -q "^ddev_version_constraint: '>= v1\.24\.[3-9][0-9]*'" "$install_yaml" && ! grep -q "^ddev_version_constraint: '>= v1\.2[5-9]\." "$install_yaml"; then
-            actions+=("install.yaml should contain 'ddev_version_constraint: \">= v1.24.3\"' or higher, see upstream file $UPSTREAM/$install_yaml")
+        # Check for ddev_version_constraint >= v1.24.10
+        local has_valid_version=false
+        if grep -q "^ddev_version_constraint:" "$install_yaml"; then
+            # Extract the version number from the constraint (handles both single and double quotes)
+            local version_string
+            version_string=$(grep "^ddev_version_constraint:" "$install_yaml" | head -1 | sed "s/^ddev_version_constraint: ['\"]>= v//; s/['\"].*//" | grep -o "^[0-9.]*")
+
+            if [[ -n "$version_string" ]]; then
+                # Split version into components
+                local major minor patch
+                IFS='.' read -r major minor patch <<< "$version_string"
+                major=${major:-0}
+                minor=${minor:-0}
+                patch=${patch:-0}
+
+                # Check if version is >= 1.24.10
+                if (( major > 1 )) || \
+                   (( major == 1 && minor > 24 )) || \
+                   (( major == 1 && minor == 24 && patch >= 10 )); then
+                    has_valid_version=true
+                fi
+            fi
+        fi
+
+        if [[ "$has_valid_version" != "true" ]]; then
+            actions+=("install.yaml should contain \`ddev_version_constraint: '>= v1.24.10'\` or higher, see upstream file $UPSTREAM/$install_yaml")
         fi
 
         # Check for addon-template
         if grep -q "addon-template" "$install_yaml"; then
             actions+=("install.yaml should not contain 'addon-template', use your own name")
+        fi
+
+        # Check for #ddev-nodisplay tag
+        if grep -q "#ddev-nodisplay" "$install_yaml"; then
+            actions+=("install.yaml should not contain '#ddev-nodisplay' tag, it's not used anymore, see upstream file $UPSTREAM/$install_yaml")
         fi
     else
         actions+=("install.yaml is missing, see upstream file $UPSTREAM/$install_yaml")
@@ -110,9 +137,11 @@ check_tests_workflow() {
         if ! grep -q "ddev/github-action-add-on-test@v2" "$tests_yml"; then
             actions+=("$tests_yml should use 'ddev/github-action-add-on-test@v2', see upstream file $UPSTREAM/$tests_yml")
         fi
-        # Check for paths-ignore
-        if ! grep -q "paths-ignore" "$tests_yml"; then
-            actions+=("$tests_yml should have 'paths-ignore' for markdown, see upstream file $UPSTREAM/$tests_yml")
+        # Check for at least 2 instances of paths-ignore
+        local paths_ignore_count
+        paths_ignore_count=$(grep -o "paths-ignore:" "$tests_yml" 2>/dev/null | wc -l)
+        if (( paths_ignore_count < 2 )); then
+            actions+=("$tests_yml should contain at least 2 instances of 'paths-ignore:', found $paths_ignore_count, see upstream file $UPSTREAM/$tests_yml")
         fi
     else
         actions+=("$tests_yml is missing, see upstream file $UPSTREAM/$tests_yml")
@@ -203,6 +232,28 @@ check_gitattributes() {
   fi
 }
 
+# Check for trailing newline in all files
+check_trailing_newline() {
+    local file
+    # Get all tracked files from git, excluding binary files and specific patterns
+    while IFS= read -r -d '' file; do
+        # Skip if file doesn't exist, isn't readable, or is empty
+        if [[ ! -f "$file" || ! -r "$file" || ! -s "$file" ]]; then
+            continue
+        fi
+
+        # Skip binary files and images
+        if file "$file" 2>/dev/null | grep -qE "image|binary|executable|archive"; then
+            continue
+        fi
+
+        # Check if file ends with a newline
+        if [[ -n "$(tail -c 1 "$file" 2>/dev/null)" ]]; then
+            actions+=("$file should have an empty line at the end")
+        fi
+    done < <(git ls-files -z 2>/dev/null || find . -type f -not -path './.git/*' -print0 2>/dev/null)
+}
+
 # Main function
 main() {
     if [[ ! -f "install.yaml" ]]; then
@@ -246,9 +297,12 @@ main() {
 
     # Check LICENSE file
     check_license
-  
+
     # Check .gitattributes
     check_gitattributes
+
+    # Check for trailing newline in files
+    check_trailing_newline
 
     # If any actions are needed, throw an error
     if [[ ${#actions[@]} -gt 0 ]]; then
