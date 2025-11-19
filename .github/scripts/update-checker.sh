@@ -279,6 +279,19 @@ check_gitattributes() {
 # Check for trailing newline and whitespace-only lines in all files
 check_file_formatting() {
     local file
+
+    # Check if git command exists
+    if ! command -v git >/dev/null 2>&1; then
+        info_messages+=("git command not found, skipping file formatting checks")
+        return
+    fi
+
+    # Check for untracked files
+    if [[ -n "$(git ls-files --others --exclude-standard 2>/dev/null)" ]]; then
+        actions+=("Untracked files exist. Please stage or remove them before running file formatting checks.")
+        return
+    fi
+
     # Get all tracked files from git, excluding binary files and specific patterns
     while IFS= read -r -d '' file; do
         # Skip binary files and images
@@ -295,7 +308,7 @@ check_file_formatting() {
         if grep -qn '^[[:space:]]\+$' "$file" 2>/dev/null; then
             actions+=("$file contains lines with only spaces/tabs, remove trailing whitespace")
         fi
-    done < <(git ls-files -z 2>/dev/null | grep -zv '^tests/testdata/' || find . -type f -not -path './.git/*' -not -path './tests/testdata/*' -print0 2>/dev/null)
+    done < <(git ls-files -z 2>/dev/null | grep -zv '^tests/testdata/')
 }
 
 # Main function
