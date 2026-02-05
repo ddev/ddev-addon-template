@@ -1,5 +1,26 @@
 #!/usr/bin/env bash
 
+# DDEV Add-on Update Checker
+#
+# This script validates that a DDEV add-on follows the current template standards.
+# It checks various files and configurations to ensure compatibility and best practices:
+#   - README.md badges and documentation
+#   - install.yaml configuration and version constraints
+#   - Test files (*.bats) structure and requirements
+#   - GitHub workflows and templates
+#   - Docker Compose files for offline usage support
+#   - File formatting (trailing newlines, whitespace)
+#   - Proper shebangs in command files
+#
+# Usage (run from the add-on root directory):
+#   curl -fsSL https://ddev.com/s/addon-update-checker.sh | bash
+#
+# Note: This script is removed from add-ons created from this template.
+# Add-on developers should always use the remote version via curl.
+#
+# Test Bash 3.2 compatibility (for template maintainers):
+#   docker run --rm -v "$(pwd)":/test -w /test bash:3.2 /test/.github/scripts/update-checker.sh
+
 set -o errexit
 set -o nounset
 
@@ -107,9 +128,13 @@ check_install_yaml() {
 check_test_bats() {
     local test_bats="tests/test.bats"
     local bats_files
+    local file
 
     # Find any .bats files in tests directory
-    mapfile -t bats_files < <(find tests -maxdepth 1 -name "*.bats" -type f 2>/dev/null)
+    bats_files=()
+    while IFS= read -r file; do
+        [[ -n "$file" ]] && bats_files+=("$file")
+    done < <(find tests -maxdepth 1 -name "*.bats" -type f 2>/dev/null)
 
     if [[ ${#bats_files[@]} -eq 0 ]]; then
         actions+=("tests/ directory should contain at least one .bats test file, see upstream file $UPSTREAM/tests/test.bats")
