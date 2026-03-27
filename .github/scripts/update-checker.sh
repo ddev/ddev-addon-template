@@ -11,6 +11,7 @@
 #   - Docker Compose files for offline usage support
 #   - File formatting (trailing newlines, whitespace)
 #   - Proper shebangs in command files
+#   - Command files are executable
 #
 # Usage (run from the add-on root directory):
 #   curl -fsSL https://ddev.com/s/addon-update-checker.sh | bash
@@ -197,6 +198,15 @@ check_shebang() {
     done < <(find commands -type f -print0 2>/dev/null || true)
 }
 
+# Check that certain commands/**/* files are executable
+# Files starting with . or _ are exempt as they might be include files
+check_command_executability() {
+    local file
+    while IFS= read -r -d '' file; do
+        actions+=("$file should be executable")
+    done < <(find commands -type f \! -executable \! -name '.*' \! -name '_*' -print0 2>/dev/null || true)
+}
+
 # Check .github/workflows/tests.yml for required conditions
 check_tests_workflow() {
     local tests_yml=".github/workflows/tests.yml"
@@ -278,7 +288,7 @@ check_addon_template_mentions() {
 # Check LICENSE file for Apache License
 check_license() {
     local license_file="LICENSE"
-    
+
     if [[ -f "$license_file" ]]; then
         if ! grep -q "Apache License" "$license_file"; then
             actions+=("LICENSE should contain 'Apache License', see upstream file $UPSTREAM/$license_file")
@@ -367,6 +377,9 @@ main() {
 
     # Check shebang in commands/**/* files
     check_shebang
+
+    # Check commands/**/* files are executable
+    check_command_executability
 
     # Check tests workflow
     check_tests_workflow
