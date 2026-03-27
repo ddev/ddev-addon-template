@@ -199,12 +199,11 @@ check_shebang() {
 }
 
 # Check that certain commands/**/* files are executable
-# Files starting with . or _ are exempt as they might be include files
 check_command_executability() {
     local file
     while IFS= read -r -d '' file; do
         actions+=("$file should be executable")
-    done < <(find commands -type f \! -executable \! -name '.*' \! -name '_*' -print0 2>/dev/null || true)
+    done < <(find commands -type f \! -executable -print0 2>/dev/null || true)
 }
 
 # Check .github/workflows/tests.yml for required conditions
