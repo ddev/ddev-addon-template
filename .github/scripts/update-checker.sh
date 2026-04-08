@@ -202,12 +202,8 @@ check_shebang() {
 check_command_executability() {
     local file
     while IFS= read -r -d '' file; do
-        if [[ -f "$file" && -r "$file" ]]; then
-            if grep -q "^## Usage:" "$file" 2>/dev/null; then
-                if [[ ! -x "$file" ]]; then
-                    actions+=("$file should be executable, run 'chmod +x $file'")
-                fi
-            fi
+        if [[ ! -x "$file" ]]; then
+            actions+=("$file should be executable, run 'chmod +x \"$file\"'")
         fi
     done < <(find commands -type f -print0 2>/dev/null || true)
 }
