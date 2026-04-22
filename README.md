@@ -16,7 +16,7 @@
 
 ## What is DDEV Add-on Template?
 
-This repository is a template for providing [DDEV](https://ddev.readthedocs.io) add-ons and services.
+This repository is a template for providing [DDEV](https://docs.ddev.com) add-ons and services.
 
 In DDEV, add-ons can be installed from the command line using the `ddev add-on get` command, for example, `ddev add-on get ddev/ddev-redis` or `ddev add-on get ddev/ddev-solr`.
 
@@ -67,7 +67,7 @@ curl -fsSL https://ddev.com/s/addon-update-checker.sh | bash
    * The fundamental line is the `project_files` directive, a list of files to be copied from this repo into the project `.ddev` directory.
    * You can optionally add files to the `global_files` directive as well, which will cause files to be placed in the global `~/.ddev` directory.
    * Make sure to have the `ddev_version_constraint` directive, to keep the add-on users up to date.
-   * Finally, `pre_install_commands` and `post_install_commands` are supported. These can use the host-side environment variables documented [in DDEV docs](https://ddev.readthedocs.io/en/stable/users/extend/custom-commands/#environment-variables-provided).
+   * Finally, `pre_install_actions` and `post_install_actions` are supported. These can use the host-side environment variables documented [in DDEV docs](https://docs.ddev.com/en/stable/users/extend/custom-commands/#environment-variables-provided).
 
 5. Update `tests/test.bats` to provide a reasonable test for your repository:
 
@@ -101,7 +101,7 @@ See [full instructions](./README_DEBUG.md).
 * [DDEV Add-ons: Creating, maintaining, testing](https://www.youtube.com/watch?v=TmXqQe48iqE) (part of the [DDEV Contributor Live Training](https://ddev.com/blog/contributor-training))
 * [Advanced Add-On Techniques](https://ddev.com/blog/advanced-add-on-contributor-training/)
 * [DDEV Add-on Maintenance Guide](https://ddev.com/blog/ddev-add-on-maintenance-guide/)
-* [DDEV Documentation for Add-ons](https://ddev.readthedocs.io/en/stable/users/extend/additional-services/)
+* [DDEV Documentation for Add-ons](https://docs.ddev.com/en/stable/users/extend/additional-services/)
 * [DDEV Add-on Registry](https://addons.ddev.com/)
 
 ## Credits
