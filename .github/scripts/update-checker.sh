@@ -347,6 +347,19 @@ check_file_formatting() {
     done < <(git ls-files -z 2>/dev/null | grep -zv '^tests/testdata/')
 }
 
+# Check .editorconfig
+check_editorconfig() {
+  local editorconfig=".editorconfig"
+
+  if [[ -f "$editorconfig" ]]; then
+    if ! grep -q "charset = utf-8" "$editorconfig"; then
+      actions+=("$editorconfig should contain 'charset = utf-8', see upstream file $UPSTREAM/$editorconfig")
+    fi
+  else
+    actions+=("$editorconfig is missing, see upstream file $UPSTREAM/$editorconfig")
+  fi
+}
+
 # Main function
 main() {
     if [[ ! -f "install.yaml" ]]; then
@@ -399,6 +412,9 @@ main() {
 
     # Check file formatting
     check_file_formatting
+
+    # Check .editorconfig
+    check_editorconfig
 
     # Display info messages if any
     if [[ ${#info_messages[@]} -gt 0 ]]; then
