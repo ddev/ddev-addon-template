@@ -13,8 +13,12 @@
 #   - Proper shebangs in command files
 #   - Command files are executable
 #
-# Usage (run from the add-on root directory):
-#   curl -fsSL https://ddev.com/s/addon-update-checker.sh | bash
+# Usage:
+#   curl -fsSL https://ddev.com/s/addon-update-checker.sh | bash           # run in current directory
+#   curl -fsSL https://ddev.com/s/addon-update-checker.sh | bash -s /path  # run in specific directory
+#
+# If the target directory contains install.yaml, checks run there. Otherwise, immediate
+# subdirectories that contain install.yaml are each checked (workspace mode).
 #
 # Note: This script is removed from add-ons created from this template.
 # Add-on developers should always use the remote version via curl.
@@ -26,6 +30,17 @@ set -o errexit
 set -o nounset
 
 UPSTREAM=https://github.com/ddev/ddev-addon-template/blob/main
+
+# Color support - disabled when NO_COLOR is set or stdout is not a terminal
+if [[ -z "${NO_COLOR:-}" && -t 1 ]]; then
+    COLOR_GREEN='\033[0;32m'
+    COLOR_RED='\033[0;31m'
+    COLOR_RESET='\033[0m'
+else
+    COLOR_GREEN=''
+    COLOR_RED=''
+    COLOR_RESET=''
+fi
 
 # List to store info messages
 info_messages=()
@@ -363,12 +378,24 @@ check_editorconfig() {
   fi
 }
 
-# Main function
-main() {
-    if [[ ! -f "install.yaml" ]]; then
-        echo "ERROR: run this script from the add-on root directory, install.yaml is missing" >&2
-        exit 1
+# Run checks in a single directory, printing header and colored exit code
+run_in_dir() {
+    local dir=$1
+    local exit_code=0
+    printf "${COLOR_GREEN}Running add-on update checker in: %s${COLOR_RESET}\n" "$dir"
+    (cd "$dir" && run_checks) || exit_code=$?
+    if [[ $exit_code -eq 0 ]]; then
+        printf "${COLOR_GREEN}Exit code: %d${COLOR_RESET}\n" "$exit_code"
+    else
+        printf "${COLOR_RED}Exit code: %d${COLOR_RESET}\n" "$exit_code"
     fi
+    return "$exit_code"
+}
+
+# Run checks in the current directory (which must contain install.yaml)
+run_checks() {
+    info_messages=()
+    actions=()
 
     # Check unnecessary files
     check_remove_file "docker-compose.addon-template.yaml"
@@ -435,11 +462,50 @@ main() {
         for action in "${actions[@]}"; do
             echo "- $action" >&2
         done
-        exit 1
+        return 1
     else
         echo "All checks passed, no actions needed."
     fi
 }
 
+# Main entry point - accepts an optional directory argument (defaults to current directory).
+# If the directory contains install.yaml, checks run there. Otherwise, immediate subdirectories
+# that contain install.yaml are each checked (workspace mode).
+main() {
+    local root_dir="${1:-.}"
+    root_dir="$(cd "$root_dir" && pwd)"
+
+    if [[ -f "$root_dir/install.yaml" ]]; then
+        run_in_dir "$root_dir"
+        return
+    fi
+
+    # Workspace mode: scan immediate subdirectories for install.yaml
+    local dirs
+    dirs=()
+    local entry
+    for entry in "$root_dir"/*/; do
+        if [[ -d "$entry" && -f "${entry}install.yaml" ]]; then
+            dirs+=("$entry")
+        fi
+    done
+
+    if [[ ${#dirs[@]} -eq 0 ]]; then
+        printf "${COLOR_RED}ERROR: No install.yaml found in %s or its immediate subdirectories${COLOR_RESET}\n" "$root_dir" >&2
+        exit 1
+    fi
+
+    local had_error=false
+    local dir
+    for dir in "${dirs[@]}"; do
+        echo ""
+        run_in_dir "$dir" || had_error=true
+    done
+
+    if [[ "$had_error" == "true" ]]; then
+        exit 1
+    fi
+}
+
 # Run the main function
-main
+main "${1:-}"
