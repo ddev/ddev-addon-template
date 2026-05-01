@@ -51,7 +51,7 @@ name: $LOWERCASE_NAME
 project_files:
   - docker-compose.$LOWERCASE_NAME.yaml
 
-ddev_version_constraint: '>= v1.24.3'
+ddev_version_constraint: '>= v1.24.10'
 EOF
 }
 

@@ -307,6 +307,9 @@ check_gitattributes() {
     if ! grep -q "tests" "$gitattributes"; then
       actions+=("$gitattributes should contain 'tests', see upstream file $UPSTREAM/$gitattributes")
     fi
+    if ! grep -q ".editorconfig" "$gitattributes"; then
+      actions+=("$gitattributes should contain '.editorconfig', see upstream file $UPSTREAM/$gitattributes")
+    fi
   else
     actions+=("$gitattributes is missing, see upstream file $UPSTREAM/$gitattributes")
   fi
