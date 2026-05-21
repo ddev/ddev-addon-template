@@ -86,7 +86,7 @@ ddev_version_constraint: '>= v1.24.10'
 
 # List of add-on names that this add-on depends on
 dependencies:
-  # - redis
+  # - ddev/ddev-redis
 
 # DDEV environment variables can be interpolated into these actions.
 # post_install_actions are executed in the context of the target project's .ddev directory.
