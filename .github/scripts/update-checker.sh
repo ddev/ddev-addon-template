@@ -33,13 +33,13 @@ UPSTREAM=https://github.com/ddev/ddev-addon-template/blob/main
 
 # Color support - disabled when NO_COLOR is set or stdout is not a terminal
 if [[ -z "${NO_COLOR:-}" && -t 1 ]]; then
-    COLOR_GREEN='\033[0;32m'
-    COLOR_RED='\033[0;31m'
-    COLOR_RESET='\033[0m'
+  COLOR_GREEN='\033[0;32m'
+  COLOR_RED='\033[0;31m'
+  COLOR_RESET='\033[0m'
 else
-    COLOR_GREEN=''
-    COLOR_RED=''
-    COLOR_RESET=''
+  COLOR_GREEN=''
+  COLOR_RED=''
+  COLOR_RESET=''
 fi
 
 # List to store info messages
@@ -50,554 +50,554 @@ actions=()
 
 # Check for unnecessary files and suggest removal
 check_remove_file() {
-    local file=$1
-    if [[ -f "$file" ]]; then
-        actions+=("Remove unnecessary file: $file")
-    fi
+  local file=$1
+  if [[ -f "$file" ]]; then
+    actions+=("Remove unnecessary file: $file")
+  fi
 }
 
 # Check README.md for required conditions
 check_readme() {
-    local readme="README.md"
-    local badge
+  local readme="README.md"
+  local badge
 
-    if [[ -f "$readme" ]]; then
-        # Check for 'ddev add-on get'
-        if ! grep -q "ddev add-on get" "$readme"; then
-            actions+=("README.md should contain 'ddev add-on get', see upstream file $UPSTREAM/README_ADDON.md?plain=1")
-        fi
+  if [[ ! -f "$readme" ]]; then
+    actions+=("README.md is missing, see upstream file $UPSTREAM/README_ADDON.md?plain=1")
+    return
+  fi
 
-        # Check for 'ddev get'
-        if grep -q "ddev get" "$readme"; then
-            actions+=("Remove 'ddev get' from README.md, see upstream file $UPSTREAM/README_ADDON.md?plain=1")
-        fi
+  # Check for 'ddev add-on get'
+  if ! grep -q "ddev add-on get" "$readme"; then
+    actions+=("README.md should contain 'ddev add-on get', see upstream file $UPSTREAM/README_ADDON.md?plain=1")
+  fi
 
-        # Check for required badges and replacements
-        if grep -q "project is maintained" "$readme"; then
-            actions+=("README.md should not contain 'project is maintained' badge, see upstream file $UPSTREAM/README_ADDON.md?plain=1")
-        fi
+  # Check for 'ddev get'
+  if grep -q "ddev get" "$readme"; then
+    actions+=("Remove 'ddev get' from README.md, see upstream file $UPSTREAM/README_ADDON.md?plain=1")
+  fi
 
-        # Ensure the required badges are present
-        for badge in "add-on registry" "tests" "last commit" "release"; do
-            if ! grep -q "$badge" "$readme"; then
-                actions+=("README.md should contain badge: $badge, see upstream file $UPSTREAM/README_ADDON.md?plain=1")
-            fi
-        done
-    else
-        actions+=("README.md is missing, see upstream file $UPSTREAM/README_ADDON.md?plain=1")
+  # Check for required badges and replacements
+  if grep -q "project is maintained" "$readme"; then
+    actions+=("README.md should not contain 'project is maintained' badge, see upstream file $UPSTREAM/README_ADDON.md?plain=1")
+  fi
+
+  # Ensure the required badges are present
+  for badge in "add-on registry" "tests" "last commit" "release"; do
+    if ! grep -q "$badge" "$readme"; then
+      actions+=("README.md should contain badge: $badge, see upstream file $UPSTREAM/README_ADDON.md?plain=1")
     fi
+  done
 }
 
 # Check install.yaml for required conditions
 check_install_yaml() {
-    local install_yaml="install.yaml"
+  local install_yaml="install.yaml"
 
-    # Minimum required DDEV version v1.24.10
-    local min_ddev_major=1
-    local min_ddev_minor=24
-    local min_ddev_patch=10
+  # Minimum required DDEV version v1.24.10
+  local min_ddev_major=1
+  local min_ddev_minor=24
+  local min_ddev_patch=10
 
-    if [[ -f "$install_yaml" ]]; then
-        # Check for ddev_version_constraint >= minimum required version
-        local has_valid_version=false
-        if grep -q "^ddev_version_constraint:" "$install_yaml"; then
-            # Extract the version number from the constraint (handles both single and double quotes)
-            local version_string
-            version_string=$(grep "^ddev_version_constraint:" "$install_yaml" | head -1 | sed "s/^ddev_version_constraint: ['\"]>= v//; s/['\"].*//" | grep -o "^[0-9.]*")
+  if [[ ! -f "$install_yaml" ]]; then
+    actions+=("install.yaml is missing, see upstream file $UPSTREAM/$install_yaml")
+    return
+  fi
 
-            if [[ -n "$version_string" ]]; then
-                # Split version into components
-                local major minor patch
-                IFS='.' read -r major minor patch <<< "$version_string"
-                major=${major:-0}
-                minor=${minor:-0}
-                patch=${patch:-0}
+  # Check for ddev_version_constraint >= minimum required version
+  local has_valid_version=false
+  if grep -q "^ddev_version_constraint:" "$install_yaml"; then
+    # Extract the version number from the constraint (handles both single and double quotes)
+    local version_string
+    version_string=$(grep "^ddev_version_constraint:" "$install_yaml" | head -1 | sed "s/^ddev_version_constraint: ['\"]>= v//; s/['\"].*//" | grep -o "^[0-9.]*")
 
-                # Check if version is >= minimum required version
-                if (( major > min_ddev_major )) || \
-                   (( major == min_ddev_major && minor > min_ddev_minor )) || \
-                   (( major == min_ddev_major && minor == min_ddev_minor && patch >= min_ddev_patch )); then
-                    has_valid_version=true
-                fi
-            fi
-        fi
+    if [[ -n "$version_string" ]]; then
+      # Split version into components
+      local major minor patch
+      IFS='.' read -r major minor patch <<< "$version_string"
+      major=${major:-0}
+      minor=${minor:-0}
+      patch=${patch:-0}
 
-        if [[ "$has_valid_version" != "true" ]]; then
-            actions+=("install.yaml should contain \`ddev_version_constraint: '>= v${min_ddev_major}.${min_ddev_minor}.${min_ddev_patch}'\` or higher, see upstream file $UPSTREAM/$install_yaml")
-        fi
-
-        # Check for addon-template
-        if grep -q "addon-template" "$install_yaml"; then
-            actions+=("install.yaml should not contain 'addon-template', use your own name")
-        fi
-
-        # Check for #ddev-nodisplay tag
-        if grep -q "#ddev-nodisplay" "$install_yaml"; then
-            actions+=("install.yaml should not contain '#ddev-nodisplay' tag, it's not used anymore, see upstream file $UPSTREAM/$install_yaml")
-        fi
-    else
-        actions+=("install.yaml is missing, see upstream file $UPSTREAM/$install_yaml")
+      # Check if version is >= minimum required version
+      if (( major > min_ddev_major )) || \
+         (( major == min_ddev_major && minor > min_ddev_minor )) || \
+         (( major == min_ddev_major && minor == min_ddev_minor && patch >= min_ddev_patch )); then
+        has_valid_version=true
+      fi
     fi
+  fi
+
+  if [[ "$has_valid_version" != "true" ]]; then
+    actions+=("install.yaml should contain \`ddev_version_constraint: '>= v${min_ddev_major}.${min_ddev_minor}.${min_ddev_patch}'\` or higher, see upstream file $UPSTREAM/$install_yaml")
+  fi
+
+  # Check for addon-template
+  if grep -q "addon-template" "$install_yaml"; then
+    actions+=("install.yaml should not contain 'addon-template', use your own name")
+  fi
+
+  # Check for #ddev-nodisplay tag
+  if grep -q "#ddev-nodisplay" "$install_yaml"; then
+    actions+=("install.yaml should not contain '#ddev-nodisplay' tag, it's not used anymore, see upstream file $UPSTREAM/$install_yaml")
+  fi
 }
 
 # Check tests/*.bats for required conditions
 check_test_bats() {
-    local test_bats="tests/test.bats"
-    local bats_files
-    local file
+  local test_bats="tests/test.bats"
+  local bats_files
+  local file
 
-    # Find any .bats files in tests directory
-    bats_files=()
-    while IFS= read -r file; do
-        [[ -n "$file" ]] && bats_files+=("$file")
-    done < <(find tests -maxdepth 1 -name "*.bats" -type f 2>/dev/null)
+  # Find any .bats files in tests directory
+  bats_files=()
+  while IFS= read -r file; do
+    [[ -n "$file" ]] && bats_files+=("$file")
+  done < <(find tests -maxdepth 1 -name "*.bats" -type f 2>/dev/null)
 
-    if [[ ${#bats_files[@]} -eq 0 ]]; then
-        actions+=("tests/ directory should contain at least one .bats test file, see upstream file $UPSTREAM/tests/test.bats")
-        return
-    fi
+  if [[ ${#bats_files[@]} -eq 0 ]]; then
+    actions+=("tests/ directory should contain at least one .bats test file, see upstream file $UPSTREAM/tests/test.bats")
+    return
+  fi
 
-    # If tests/test.bats exists, check it for required content
-    if [[ -f "$test_bats" ]]; then
-        # Check for test_tags=release
-        if grep -q "install from release" "$test_bats" && ! grep -q "# bats test_tags=release" "$test_bats"; then
-            actions+=("$test_bats should contain '# bats test_tags=release', see upstream file $UPSTREAM/tests/test.bats")
-        fi
+  # If tests/test.bats doesn't exist, warn and skip detailed checks
+  if [[ ! -f "$test_bats" ]]; then
+    info_messages+=("$test_bats not found, skipping detailed checks. Found test files: ${bats_files[*]}")
+    return
+  fi
 
-        # Check for ddev add-on get
-        if ! grep -q "ddev add-on get" "$test_bats"; then
-            actions+=("$test_bats should contain 'ddev add-on get', see upstream file $UPSTREAM/tests/test.bats")
-        fi
+  # Check for test_tags=release
+  if grep -q "install from release" "$test_bats" && ! grep -q "# bats test_tags=release" "$test_bats"; then
+    actions+=("$test_bats should contain '# bats test_tags=release', see upstream file $UPSTREAM/tests/test.bats")
+  fi
 
-        # Check for GITHUB_ENV usage
-        if ! grep -q "GITHUB_ENV" "$test_bats"; then
-            actions+=("$test_bats should use GITHUB_ENV in teardown() function, see upstream file $UPSTREAM/tests/test.bats")
-        fi
+  # Check for ddev add-on get
+  if ! grep -q "ddev add-on get" "$test_bats"; then
+    actions+=("$test_bats should contain 'ddev add-on get', see upstream file $UPSTREAM/tests/test.bats")
+  fi
 
-        # Check for DDEV_NONINTERACTIVE=true
-        if ! grep -q "DDEV_NONINTERACTIVE=true" "$test_bats"; then
-            actions+=("$test_bats should set DDEV_NONINTERACTIVE=true, see upstream file $UPSTREAM/tests/test.bats")
-        fi
+  # Check for GITHUB_ENV usage
+  if ! grep -q "GITHUB_ENV" "$test_bats"; then
+    actions+=("$test_bats should use GITHUB_ENV in teardown() function, see upstream file $UPSTREAM/tests/test.bats")
+  fi
 
-        # Check for DDEV_NO_INSTRUMENTATION=true
-        if ! grep -q "DDEV_NO_INSTRUMENTATION=true" "$test_bats"; then
-            actions+=("$test_bats should set DDEV_NO_INSTRUMENTATION=true, see upstream file $UPSTREAM/tests/test.bats")
-        fi
+  # Check for DDEV_NONINTERACTIVE=true
+  if ! grep -q "DDEV_NONINTERACTIVE=true" "$test_bats"; then
+    actions+=("$test_bats should set DDEV_NONINTERACTIVE=true, see upstream file $UPSTREAM/tests/test.bats")
+  fi
 
-        # Check for GITHUB_REPO
-        if ! grep -q "GITHUB_REPO" "$test_bats"; then
-            actions+=("$test_bats should define GITHUB_REPO, see upstream file $UPSTREAM/tests/test.bats")
-        fi
+  # Check for DDEV_NO_INSTRUMENTATION=true
+  if ! grep -q "DDEV_NO_INSTRUMENTATION=true" "$test_bats"; then
+    actions+=("$test_bats should set DDEV_NO_INSTRUMENTATION=true, see upstream file $UPSTREAM/tests/test.bats")
+  fi
 
-        # Check for bats_load_library
-        if ! grep -q "bats_load_library" "$test_bats"; then
-            actions+=("$test_bats should use bats_load_library, see upstream file $UPSTREAM/tests/test.bats")
-        fi
-    else
-        # Warn if using non-standard test files
-        info_messages+=("$test_bats not found, skipping detailed checks. Found test files: ${bats_files[*]}")
-    fi
+  # Check for GITHUB_REPO
+  if ! grep -q "GITHUB_REPO" "$test_bats"; then
+    actions+=("$test_bats should define GITHUB_REPO, see upstream file $UPSTREAM/tests/test.bats")
+  fi
+
+  # Check for bats_load_library
+  if ! grep -q "bats_load_library" "$test_bats"; then
+    actions+=("$test_bats should use bats_load_library, see upstream file $UPSTREAM/tests/test.bats")
+  fi
 }
 
 # Check for correct shebang in commands/**/* files
 check_shebang() {
-    local file
-    while IFS= read -r -d '' file; do
-        if [[ -f "$file" && -r "$file" ]]; then
-            local first_line
-            first_line=$(head -n1 "$file" 2>/dev/null || echo "")
-            if [[ "$first_line" != "#!"* ]]; then
-                actions+=("$file should start with a shebang like '#!/usr/bin/env bash'")
-            elif [[ "$first_line" == "#!/bin/bash" ]]; then
-                actions+=("$file should use '#!/usr/bin/env bash' instead of '#!/bin/bash'")
-            fi
-        fi
-    done < <(find commands -type f -print0 2>/dev/null || true)
+  local file
+  while IFS= read -r -d '' file; do
+    [[ -f "$file" && -r "$file" ]] || continue
+    local first_line
+    first_line=$(head -n1 "$file" 2>/dev/null || echo "")
+    if [[ "$first_line" != "#!"* ]]; then
+      actions+=("$file should start with a shebang like '#!/usr/bin/env bash'")
+    elif [[ "$first_line" == "#!/bin/bash" ]]; then
+      actions+=("$file should use '#!/usr/bin/env bash' instead of '#!/bin/bash'")
+    fi
+  done < <(find commands -type f -print0 2>/dev/null || true)
 }
 
 # Check that certain commands/**/* files are executable
 check_command_executability() {
-    local file
-    while IFS= read -r -d '' file; do
-        if [[ ! -x "$file" ]]; then
-            actions+=("$file should be executable, run 'chmod +x \"$file\"'")
-        fi
-    done < <(find commands -type f -print0 2>/dev/null || true)
+  local file
+  while IFS= read -r -d '' file; do
+    if [[ ! -x "$file" ]]; then
+      actions+=("$file should be executable, run 'chmod +x \"$file\"'")
+    fi
+  done < <(find commands -type f -print0 2>/dev/null || true)
 }
 
 # Check .github/workflows/tests.yml for required conditions
 check_tests_workflow() {
-    local tests_yml=".github/workflows/tests.yml"
+  local tests_yml=".github/workflows/tests.yml"
 
-    if [[ -f "$tests_yml" ]]; then
-        # Check for ddev/github-action-add-on-test@v2
-        if ! grep -q "ddev/github-action-add-on-test@v2" "$tests_yml"; then
-            actions+=("$tests_yml should use 'ddev/github-action-add-on-test@v2', see upstream file $UPSTREAM/$tests_yml")
-        fi
-        # Check for at least 2 instances of paths-ignore
-        local paths_ignore_count
-        paths_ignore_count=$(grep -o "paths-ignore:" "$tests_yml" 2>/dev/null | wc -l)
-        if (( paths_ignore_count < 2 )); then
-            actions+=("$tests_yml should contain at least 2 instances of 'paths-ignore:', found $paths_ignore_count, see upstream file $UPSTREAM/$tests_yml")
-        fi
-    else
-        actions+=("$tests_yml is missing, see upstream file $UPSTREAM/$tests_yml")
-    fi
+  if [[ ! -f "$tests_yml" ]]; then
+    actions+=("$tests_yml is missing, see upstream file $UPSTREAM/$tests_yml")
+    return
+  fi
+
+  # Check for ddev/github-action-add-on-test@v2
+  if ! grep -q "ddev/github-action-add-on-test@v2" "$tests_yml"; then
+    actions+=("$tests_yml should use 'ddev/github-action-add-on-test@v2', see upstream file $UPSTREAM/$tests_yml")
+  fi
+  # Check for at least 2 instances of paths-ignore
+  local paths_ignore_count
+  paths_ignore_count=$(grep -o "paths-ignore:" "$tests_yml" 2>/dev/null | wc -l)
+  if (( paths_ignore_count < 2 )); then
+    actions+=("$tests_yml should contain at least 2 instances of 'paths-ignore:', found $paths_ignore_count, see upstream file $UPSTREAM/$tests_yml")
+  fi
 }
 
 # Check docker-compose.*.yaml files for 'build:' with 'image:' usage
 check_docker_compose_yaml() {
-    local file
-    while IFS= read -r -d '' file; do
-        if [[ -f "$file" && -r "$file" ]]; then
-            if grep -q "build:" "$file" && ! grep -q "image:" "$file"; then
-                actions+=("$file contains 'build:', but there is no 'image:', example: 'image: \${ADDON_TEMPLATE_DOCKER_IMAGE:-ddev/ddev-utilities:latest}-\${DDEV_SITENAME}-built', this is required to use DDEV offline")
-            elif grep -q "build:" "$file" && grep -q "image:" "$file" && ! grep -Eq "image:.*-\\\$\{DDEV_SITENAME\}-built" "$file"; then
-                actions+=("$file contains both 'build:' and 'image:', but 'image:' line should contain '-\${DDEV_SITENAME}-built', example: 'image: \${ADDON_TEMPLATE_DOCKER_IMAGE:-ddev/ddev-utilities:latest}-\${DDEV_SITENAME}-built', this is required to use DDEV offline")
-            fi
-        fi
-    done < <(find . -name "docker-compose.*.yaml" -print0 2>/dev/null || true)
+  local file
+  while IFS= read -r -d '' file; do
+    [[ -f "$file" && -r "$file" ]] || continue
+    if grep -q "build:" "$file" && ! grep -q "image:" "$file"; then
+      actions+=("$file contains 'build:', but there is no 'image:', example: 'image: \${ADDON_TEMPLATE_DOCKER_IMAGE:-ddev/ddev-utilities:latest}-\${DDEV_SITENAME}-built', this is required to use DDEV offline")
+    elif grep -q "build:" "$file" && grep -q "image:" "$file" && ! grep -Eq "image:.*-\\\$\{DDEV_SITENAME\}-built" "$file"; then
+      actions+=("$file contains both 'build:' and 'image:', but 'image:' line should contain '-\${DDEV_SITENAME}-built', example: 'image: \${ADDON_TEMPLATE_DOCKER_IMAGE:-ddev/ddev-utilities:latest}-\${DDEV_SITENAME}-built', this is required to use DDEV offline")
+    fi
+  done < <(find . -name "docker-compose.*.yaml" -print0 2>/dev/null || true)
 }
 
 # Check for required GitHub template files
 check_github_templates() {
-    local templates=(
-        ".github/ISSUE_TEMPLATE/bug_report.yml"
-        ".github/ISSUE_TEMPLATE/feature_request.yml"
-        ".github/PULL_REQUEST_TEMPLATE.md"
-    )
-    local template
+  local templates=(
+    ".github/ISSUE_TEMPLATE/bug_report.yml"
+    ".github/ISSUE_TEMPLATE/feature_request.yml"
+    ".github/PULL_REQUEST_TEMPLATE.md"
+  )
+  local template
 
-    for template in "${templates[@]}"; do
-        if [[ ! -f "$template" ]]; then
-            actions+=("GitHub template missing: $template, see upstream file $UPSTREAM/$template?plain=1")
-        fi
-    done
-
-    # Check PULL_REQUEST_TEMPLATE.md for the forbidden exact link
-    local pr_template=".github/PULL_REQUEST_TEMPLATE.md"
-    if [[ -f "$pr_template" ]]; then
-        if ! grep -q "REPLACE_ME_WITH_THIS_PR_NUMBER" "$pr_template"; then
-            actions+=("PULL_REQUEST_TEMPLATE.md should contain 'ddev add-on get https://github.com/<your-name>/<your-repo>/tarball/refs/pull/REPLACE_ME_WITH_THIS_PR_NUMBER/head', see upstream file $UPSTREAM/$pr_template?plain=1")
-        fi
+  for template in "${templates[@]}"; do
+    if [[ ! -f "$template" ]]; then
+      actions+=("GitHub template missing: $template, see upstream file $UPSTREAM/$template?plain=1")
+      continue
     fi
+    # Check PULL_REQUEST_TEMPLATE.md for the required PR testing instruction
+    if [[ "$template" == ".github/PULL_REQUEST_TEMPLATE.md" ]]; then
+      if ! grep -q "REPLACE_ME_WITH_THIS_PR_NUMBER" "$template"; then
+        actions+=("PULL_REQUEST_TEMPLATE.md should contain 'ddev add-on get https://github.com/<your-name>/<your-repo>/tarball/refs/pull/REPLACE_ME_WITH_THIS_PR_NUMBER/head', see upstream file $UPSTREAM/$template?plain=1")
+      fi
+    fi
+  done
 }
 
 # Check all files for "addon-template" mentions
 check_addon_template_mentions() {
-    local file
-    for file in install.yaml README.md docker-compose.*.yaml tests/test.bats .github/PULL_REQUEST_TEMPLATE.md; do
-        if [[ -f "$file" ]]; then
-            if grep -q "ddev/ddev-addon-template" "$file"; then
-                actions+=("Replace 'ddev/ddev-addon-template' mentions with your add-on name in: $file")
-            elif grep -q "addon-template" "$file"; then
-                actions+=("Replace 'addon-template' mentions with your add-on name in: $file")
-            fi
-            if grep -q "ADDON_TEMPLATE" "$file"; then
-                actions+=("Replace 'ADDON_TEMPLATE' mentions with your add-on name in: $file")
-            fi
-            if grep -q "Add-on Template" "$file"; then
-                actions+=("Replace 'Add-on Template' mentions with your add-on name in: $file")
-            fi
-        fi
-    done
+  local file
+  for file in install.yaml README.md docker-compose.*.yaml tests/test.bats .github/PULL_REQUEST_TEMPLATE.md; do
+    [[ -f "$file" ]] || continue
+    if grep -q "ddev/ddev-addon-template" "$file"; then
+      actions+=("Replace 'ddev/ddev-addon-template' mentions with your add-on name in: $file")
+    elif grep -q "addon-template" "$file"; then
+      actions+=("Replace 'addon-template' mentions with your add-on name in: $file")
+    fi
+    if grep -q "ADDON_TEMPLATE" "$file"; then
+      actions+=("Replace 'ADDON_TEMPLATE' mentions with your add-on name in: $file")
+    fi
+    if grep -q "Add-on Template" "$file"; then
+      actions+=("Replace 'Add-on Template' mentions with your add-on name in: $file")
+    fi
+  done
 }
 
 # Check LICENSE file for Apache License
 check_license() {
-    local license_file="LICENSE"
+  local license_file="LICENSE"
 
-    if [[ -f "$license_file" ]]; then
-        if ! grep -q "Apache License" "$license_file"; then
-            actions+=("LICENSE should contain 'Apache License', see upstream file $UPSTREAM/$license_file")
-        fi
-    else
-        actions+=("LICENSE is missing, see upstream file $UPSTREAM/$license_file")
-    fi
+  if [[ ! -f "$license_file" ]]; then
+    actions+=("LICENSE is missing, see upstream file $UPSTREAM/$license_file")
+    return
+  fi
+
+  if ! grep -q "Apache License" "$license_file"; then
+    actions+=("LICENSE should contain 'Apache License', see upstream file $UPSTREAM/$license_file")
+  fi
 }
 
 # Check that files listed in install.yaml project_files/global_files contain #ddev-generated
 check_ddev_generated() {
-    local install_yaml="install.yaml"
+  local install_yaml="install.yaml"
 
-    local line entry in_section section dir_file
-    local list_item_re='^[[:space:]]*-[[:space:]]+(.*)'
+  local line entry in_section section dir_file
+  local list_item_re='^[[:space:]]*-[[:space:]]+(.*)'
 
-    for section in project_files global_files; do
-        in_section=false
-        while IFS= read -r line; do
-            # Detect section header
-            if [[ "$line" == "${section}:" ]]; then
-                in_section=true
-                continue
-            fi
+  for section in project_files global_files; do
+    in_section=false
+    while IFS= read -r line; do
+      # Detect section header
+      if [[ "$line" == "${section}:" ]]; then
+        in_section=true
+        continue
+      fi
 
-            [[ "$in_section" != "true" ]] && continue
+      [[ "$in_section" != "true" ]] && continue
 
-            # A top-level YAML key (starts with a letter) ends the section
-            [[ "$line" =~ ^[a-zA-Z] ]] && break
+      # A top-level YAML key (starts with a letter) ends the section
+      [[ "$line" =~ ^[a-zA-Z] ]] && break
 
-            # Match non-commented list entries with any indentation: "- <value>"
-            [[ "$line" =~ $list_item_re ]] || continue
-            entry="${BASH_REMATCH[1]}"
+      # Match non-commented list entries with any indentation: "- <value>"
+      [[ "$line" =~ $list_item_re ]] || continue
+      entry="${BASH_REMATCH[1]}"
 
-            [[ -z "$entry" ]] && continue
+      [[ -z "$entry" ]] && continue
 
-            # Skip entries with environment variable interpolation (can't resolve at check time)
-            [[ "$entry" =~ \$\{ ]] && continue
+      # Skip entries with environment variable interpolation (can't resolve at check time)
+      [[ "$entry" =~ \$\{ ]] && continue
 
-            # For directories, check all files inside recursively
-            if [[ -d "$entry" ]]; then
-                while IFS= read -r -d '' dir_file; do
-                    if ! grep -q "#ddev-generated" "$dir_file" 2>/dev/null; then
-                        actions+=("$dir_file (in directory $entry listed in install.yaml $section) does not contain '#ddev-generated'")
-                    fi
-                done < <(find "$entry" -type f -print0 2>/dev/null)
-                continue
-            fi
+      # For directories, check all files inside recursively
+      if [[ -d "$entry" ]]; then
+        while IFS= read -r -d '' dir_file; do
+          if ! grep -q "#ddev-generated" "$dir_file" 2>/dev/null; then
+            actions+=("$dir_file (in directory $entry listed in install.yaml $section) does not contain '#ddev-generated'")
+          fi
+        done < <(find "$entry" -type f -print0 2>/dev/null)
+        continue
+      fi
 
-            [[ ! -f "$entry" ]] && continue
+      [[ ! -f "$entry" ]] && continue
 
-            if ! grep -q "#ddev-generated" "$entry" 2>/dev/null; then
-                actions+=("$entry is listed in install.yaml ($section) but does not contain '#ddev-generated'")
-            fi
-        done < "$install_yaml"
-    done
+      if ! grep -q "#ddev-generated" "$entry" 2>/dev/null; then
+        actions+=("$entry is listed in install.yaml ($section) but does not contain '#ddev-generated'")
+      fi
+    done < "$install_yaml"
+  done
 }
 
 # Check that dependencies in install.yaml use org/repo format
 check_dependencies() {
-    local install_yaml="install.yaml"
+  local install_yaml="install.yaml"
 
-    local line entry in_section
-    local list_item_re='^[[:space:]]*-[[:space:]]+(.*)'
+  local line entry in_section
+  local list_item_re='^[[:space:]]*-[[:space:]]+(.*)'
 
-    in_section=false
-    while IFS= read -r line; do
-        if [[ "$line" == "dependencies:" ]]; then
-            in_section=true
-            continue
-        fi
+  in_section=false
+  while IFS= read -r line; do
+    if [[ "$line" == "dependencies:" ]]; then
+      in_section=true
+      continue
+    fi
 
-        [[ "$in_section" != "true" ]] && continue
+    [[ "$in_section" != "true" ]] && continue
 
-        # A top-level YAML key (starts with a letter) ends the section
-        [[ "$line" =~ ^[a-zA-Z] ]] && break
+    # A top-level YAML key (starts with a letter) ends the section
+    [[ "$line" =~ ^[a-zA-Z] ]] && break
 
-        [[ "$line" =~ $list_item_re ]] || continue
-        entry="${BASH_REMATCH[1]}"
+    [[ "$line" =~ $list_item_re ]] || continue
+    entry="${BASH_REMATCH[1]}"
 
-        [[ -z "$entry" ]] && continue
+    [[ -z "$entry" ]] && continue
 
-        if [[ "$entry" != */* ]]; then
-            local example_repo
-            if [[ "$entry" == ddev-* ]]; then
-                example_repo="ddev/$entry"
-            else
-                example_repo="ddev/ddev-$entry"
-            fi
-            actions+=("install.yaml dependency '$entry' should use org/repo format (e.g. '$example_repo'), see upstream file $UPSTREAM/$install_yaml")
-        fi
-    done < "$install_yaml"
+    if [[ "$entry" != */* ]]; then
+      local example_repo
+      if [[ "$entry" == ddev-* ]]; then
+        example_repo="ddev/$entry"
+      else
+        example_repo="ddev/ddev-$entry"
+      fi
+      actions+=("install.yaml dependency '$entry' should use org/repo format (e.g. '$example_repo'), see upstream file $UPSTREAM/$install_yaml")
+    fi
+  done < "$install_yaml"
 }
 
 # Check .gitattributes
 check_gitattributes() {
   local gitattributes=".gitattributes"
 
-  if [[ -f "$gitattributes" ]]; then
-    if ! grep -q "tests" "$gitattributes"; then
-      actions+=("$gitattributes should contain 'tests', see upstream file $UPSTREAM/$gitattributes")
-    fi
-    if ! grep -q ".editorconfig" "$gitattributes"; then
-      actions+=("$gitattributes should contain '.editorconfig', see upstream file $UPSTREAM/$gitattributes")
-    fi
-  else
+  if [[ ! -f "$gitattributes" ]]; then
     actions+=("$gitattributes is missing, see upstream file $UPSTREAM/$gitattributes")
+    return
+  fi
+
+  if ! grep -q "tests" "$gitattributes"; then
+    actions+=("$gitattributes should contain 'tests', see upstream file $UPSTREAM/$gitattributes")
+  fi
+  if ! grep -q ".editorconfig" "$gitattributes"; then
+    actions+=("$gitattributes should contain '.editorconfig', see upstream file $UPSTREAM/$gitattributes")
   fi
 }
 
 # Check for trailing newline and whitespace-only lines in all files
 check_file_formatting() {
-    local file
+  local file
 
-    # Check if git command exists
-    if ! command -v git >/dev/null 2>&1; then
-        info_messages+=("git command not found, skipping file formatting checks")
-        return
+  # Check if git command exists
+  if ! command -v git >/dev/null 2>&1; then
+    info_messages+=("git command not found, skipping file formatting checks")
+    return
+  fi
+
+  # Check for untracked files
+  if [[ -n "$(git ls-files --others --exclude-standard 2>/dev/null)" ]]; then
+    actions+=("Untracked files exist. Please stage or remove them before running file formatting checks.")
+    return
+  fi
+
+  # Get all tracked files from git, excluding binary files and specific patterns
+  while IFS= read -r -d '' file; do
+    # Skip binary files and images
+    file "$file" 2>/dev/null | grep -qE "image|binary|executable|archive" && continue
+
+    # Check if file ends with a newline
+    if [[ -n "$(tail -c 1 "$file" 2>/dev/null)" ]]; then
+      actions+=("$file should have an empty line at the end")
     fi
 
-    # Check for untracked files
-    if [[ -n "$(git ls-files --others --exclude-standard 2>/dev/null)" ]]; then
-        actions+=("Untracked files exist. Please stage or remove them before running file formatting checks.")
-        return
+    # Check for lines containing only whitespace
+    if grep -qn '^[[:space:]]\+$' "$file" 2>/dev/null; then
+      actions+=("$file contains lines with only spaces/tabs, remove trailing whitespace")
     fi
-
-    # Get all tracked files from git, excluding binary files and specific patterns
-    while IFS= read -r -d '' file; do
-        # Skip binary files and images
-        if file "$file" 2>/dev/null | grep -qE "image|binary|executable|archive"; then
-            continue
-        fi
-
-        # Check if file ends with a newline
-        if [[ -n "$(tail -c 1 "$file" 2>/dev/null)" ]]; then
-            actions+=("$file should have an empty line at the end")
-        fi
-
-        # Check for lines containing only whitespace
-        if grep -qn '^[[:space:]]\+$' "$file" 2>/dev/null; then
-            actions+=("$file contains lines with only spaces/tabs, remove trailing whitespace")
-        fi
-    done < <(git ls-files -z 2>/dev/null | grep -zv '^tests/testdata/')
+  done < <(git ls-files -z 2>/dev/null | grep -zv '^tests/testdata/')
 }
 
 # Check .editorconfig
 check_editorconfig() {
   local editorconfig=".editorconfig"
 
-  if [[ -f "$editorconfig" ]]; then
-    if ! grep -q "charset = utf-8" "$editorconfig"; then
-      actions+=("$editorconfig should contain 'charset = utf-8', see upstream file $UPSTREAM/$editorconfig")
-    fi
-  else
+  if [[ ! -f "$editorconfig" ]]; then
     actions+=("$editorconfig is missing, see upstream file $UPSTREAM/$editorconfig")
+    return
+  fi
+
+  if ! grep -q "charset = utf-8" "$editorconfig"; then
+    actions+=("$editorconfig should contain 'charset = utf-8', see upstream file $UPSTREAM/$editorconfig")
   fi
 }
 
 # Run checks in a single directory, printing header and colored exit code
 run_in_dir() {
-    local dir=$1
-    local exit_code=0
-    printf "${COLOR_GREEN}Running add-on update checker in: %s${COLOR_RESET}\n" "$dir"
-    (cd "$dir" && run_checks) || exit_code=$?
-    if [[ $exit_code -eq 0 ]]; then
-        printf "${COLOR_GREEN}Exit code: %d${COLOR_RESET}\n" "$exit_code"
-    else
-        printf "${COLOR_RED}Exit code: %d${COLOR_RESET}\n" "$exit_code"
-    fi
-    return "$exit_code"
+  local dir=$1
+  local exit_code=0
+  printf "${COLOR_GREEN}Running add-on update checker in: %s${COLOR_RESET}\n" "$dir"
+  (cd "$dir" && run_checks) || exit_code=$?
+  if [[ $exit_code -eq 0 ]]; then
+    printf "${COLOR_GREEN}Exit code: %d${COLOR_RESET}\n" "$exit_code"
+  else
+    printf "${COLOR_RED}Exit code: %d${COLOR_RESET}\n" "$exit_code"
+  fi
+  return "$exit_code"
 }
 
 # Run checks in the current directory (which must contain install.yaml)
 run_checks() {
-    info_messages=()
-    actions=()
+  info_messages=()
+  actions=()
 
-    # Check unnecessary files
-    check_remove_file "docker-compose.addon-template.yaml"
-    check_remove_file "README_ADDON.md"
-    check_remove_file "README_DEBUG.md"
-    check_remove_file "images/gh-tmate.jpg"
-    check_remove_file "images/template-button.png"
-    check_remove_file ".github/scripts/first-time-setup.sh"
-    check_remove_file ".github/scripts/update-checker.sh"
-    check_remove_file ".github/workflows/first-time-setup.yml"
+  # Check unnecessary files
+  check_remove_file "docker-compose.addon-template.yaml"
+  check_remove_file "README_ADDON.md"
+  check_remove_file "README_DEBUG.md"
+  check_remove_file "images/gh-tmate.jpg"
+  check_remove_file "images/template-button.png"
+  check_remove_file ".github/scripts/first-time-setup.sh"
+  check_remove_file ".github/scripts/update-checker.sh"
+  check_remove_file ".github/workflows/first-time-setup.yml"
 
-    # Check README.md for conditions
-    check_readme
+  # Check README.md for conditions
+  check_readme
 
-    # Check install.yaml for conditions
-    check_install_yaml
+  # Check install.yaml for conditions
+  check_install_yaml
 
-    # Check #ddev-generated in files listed in install.yaml
-    check_ddev_generated
+  # Check #ddev-generated in files listed in install.yaml
+  check_ddev_generated
 
-    # Check dependencies use org/repo format
-    check_dependencies
+  # Check dependencies use org/repo format
+  check_dependencies
 
-    # Check docker-compose.*.yaml for conditions
-    check_docker_compose_yaml
+  # Check docker-compose.*.yaml for conditions
+  check_docker_compose_yaml
 
-    # Check tests/test.bats for conditions
-    check_test_bats
+  # Check tests/test.bats for conditions
+  check_test_bats
 
-    # Check shebang in commands/**/* files
-    check_shebang
+  # Check shebang in commands/**/* files
+  check_shebang
 
-    # Check commands/**/* files are executable
-    check_command_executability
+  # Check commands/**/* files are executable
+  check_command_executability
 
-    # Check tests workflow
-    check_tests_workflow
+  # Check tests workflow
+  check_tests_workflow
 
-    # Check GitHub templates
-    check_github_templates
+  # Check GitHub templates
+  check_github_templates
 
-    # Check for addon-template mentions
-    check_addon_template_mentions
+  # Check for addon-template mentions
+  check_addon_template_mentions
 
-    # Check LICENSE file
-    check_license
+  # Check LICENSE file
+  check_license
 
-    # Check .gitattributes
-    check_gitattributes
+  # Check .gitattributes
+  check_gitattributes
 
-    # Check file formatting
-    check_file_formatting
+  # Check file formatting
+  check_file_formatting
 
-    # Check .editorconfig
-    check_editorconfig
+  # Check .editorconfig
+  check_editorconfig
 
-    # Display info messages if any
-    if [[ ${#info_messages[@]} -gt 0 ]]; then
-        echo "INFO:" >&2
-        local info
-        for info in "${info_messages[@]}"; do
-            echo "- $info" >&2
-        done
-    fi
+  # Display info messages if any
+  if [[ ${#info_messages[@]} -gt 0 ]]; then
+    echo "INFO:" >&2
+    local info
+    for info in "${info_messages[@]}"; do
+      echo "- $info" >&2
+    done
+  fi
 
-    # If any actions are needed, throw an error
-    if [[ ${#actions[@]} -gt 0 ]]; then
-        echo "ERROR: Actions needed:" >&2
-        local action
-        for action in "${actions[@]}"; do
-            echo "- $action" >&2
-        done
-        return 1
-    else
-        echo "All checks passed, no actions needed."
-    fi
+  # If any actions are needed, throw an error
+  if [[ ${#actions[@]} -gt 0 ]]; then
+    echo "ERROR: Actions needed:" >&2
+    local action
+    for action in "${actions[@]}"; do
+      echo "- $action" >&2
+    done
+    return 1
+  else
+    echo "All checks passed, no actions needed."
+  fi
 }
 
 # Main entry point - accepts an optional directory argument (defaults to current directory).
 # If the directory contains install.yaml, checks run there. Otherwise, immediate subdirectories
 # that contain install.yaml are each checked (workspace mode).
 main() {
-    local root_dir="${1:-.}"
-    root_dir="$(cd "$root_dir" && pwd)"
+  local root_dir="${1:-.}"
+  root_dir="$(cd "$root_dir" && pwd)"
 
-    if [[ -f "$root_dir/install.yaml" ]]; then
-        run_in_dir "$root_dir"
-        return
+  if [[ -f "$root_dir/install.yaml" ]]; then
+    run_in_dir "$root_dir"
+    return
+  fi
+
+  # Workspace mode: scan immediate subdirectories for install.yaml
+  local dirs
+  dirs=()
+  local entry
+  for entry in "$root_dir"/*/; do
+    if [[ -d "$entry" && -f "${entry}install.yaml" ]]; then
+      dirs+=("$entry")
     fi
+  done
 
-    # Workspace mode: scan immediate subdirectories for install.yaml
-    local dirs
-    dirs=()
-    local entry
-    for entry in "$root_dir"/*/; do
-        if [[ -d "$entry" && -f "${entry}install.yaml" ]]; then
-            dirs+=("$entry")
-        fi
-    done
+  if [[ ${#dirs[@]} -eq 0 ]]; then
+    printf "${COLOR_RED}ERROR: No install.yaml found in %s or its immediate subdirectories${COLOR_RESET}\n" "$root_dir" >&2
+    exit 1
+  fi
 
-    if [[ ${#dirs[@]} -eq 0 ]]; then
-        printf "${COLOR_RED}ERROR: No install.yaml found in %s or its immediate subdirectories${COLOR_RESET}\n" "$root_dir" >&2
-        exit 1
-    fi
+  local had_error=false
+  local dir
+  for dir in "${dirs[@]}"; do
+    echo ""
+    run_in_dir "$dir" || had_error=true
+  done
 
-    local had_error=false
-    local dir
-    for dir in "${dirs[@]}"; do
-        echo ""
-        run_in_dir "$dir" || had_error=true
-    done
-
-    if [[ "$had_error" == "true" ]]; then
-        exit 1
-    fi
+  if [[ "$had_error" == "true" ]]; then
+    exit 1
+  fi
 }
 
 # Run the main function
