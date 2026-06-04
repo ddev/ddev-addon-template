@@ -206,7 +206,9 @@ check_shebang() {
         if [[ -f "$file" && -r "$file" ]]; then
             local first_line
             first_line=$(head -n1 "$file" 2>/dev/null || echo "")
-            if [[ "$first_line" == "#!/bin/bash" ]]; then
+            if [[ "$first_line" != "#!"* ]]; then
+                actions+=("$file should start with a shebang like '#!/usr/bin/env bash'")
+            elif [[ "$first_line" == "#!/bin/bash" ]]; then
                 actions+=("$file should use '#!/usr/bin/env bash' instead of '#!/bin/bash'")
             fi
         fi
