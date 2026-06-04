@@ -85,6 +85,7 @@ global_files:
 ddev_version_constraint: '>= v1.24.10'
 
 # List of add-on names that this add-on depends on
+# Dependencies must use org/repo format (e.g. ddev/ddev-redis), otherwise DDEV cannot resolve them
 dependencies:
   # - ddev/ddev-redis
 

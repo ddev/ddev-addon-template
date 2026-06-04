@@ -365,6 +365,42 @@ check_ddev_generated() {
     done
 }
 
+# Check that dependencies in install.yaml use org/repo format
+check_dependencies() {
+    local install_yaml="install.yaml"
+
+    local line entry in_section
+    local list_item_re='^[[:space:]]*-[[:space:]]+(.*)'
+
+    in_section=false
+    while IFS= read -r line; do
+        if [[ "$line" == "dependencies:" ]]; then
+            in_section=true
+            continue
+        fi
+
+        [[ "$in_section" != "true" ]] && continue
+
+        # A top-level YAML key (starts with a letter) ends the section
+        [[ "$line" =~ ^[a-zA-Z] ]] && break
+
+        [[ "$line" =~ $list_item_re ]] || continue
+        entry="${BASH_REMATCH[1]}"
+
+        [[ -z "$entry" ]] && continue
+
+        if [[ "$entry" != */* ]]; then
+            local example_repo
+            if [[ "$entry" == ddev-* ]]; then
+                example_repo="ddev/$entry"
+            else
+                example_repo="ddev/ddev-$entry"
+            fi
+            actions+=("install.yaml dependency '$entry' should use org/repo format (e.g. '$example_repo'), see upstream file $UPSTREAM/$install_yaml")
+        fi
+    done < "$install_yaml"
+}
+
 # Check .gitattributes
 check_gitattributes() {
   local gitattributes=".gitattributes"
@@ -466,6 +502,9 @@ run_checks() {
 
     # Check #ddev-generated in files listed in install.yaml
     check_ddev_generated
+
+    # Check dependencies use org/repo format
+    check_dependencies
 
     # Check docker-compose.*.yaml for conditions
     check_docker_compose_yaml
