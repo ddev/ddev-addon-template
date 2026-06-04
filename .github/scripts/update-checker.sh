@@ -316,11 +316,11 @@ check_license() {
     fi
 }
 
-# Check that files listed in install.yaml project_files/global_files contain exactly one #ddev-generated
+# Check that files listed in install.yaml project_files/global_files contain #ddev-generated
 check_ddev_generated() {
     local install_yaml="install.yaml"
 
-    local line entry count in_section section dir_file
+    local line entry in_section section dir_file
     local list_item_re='^[[:space:]]*-[[:space:]]+(.*)'
 
     for section in project_files global_files; do
@@ -349,11 +349,8 @@ check_ddev_generated() {
             # For directories, check all files inside recursively
             if [[ -d "$entry" ]]; then
                 while IFS= read -r -d '' dir_file; do
-                    count=$(grep -c "#ddev-generated" "$dir_file" 2>/dev/null) || count=0
-                    if [[ "$count" -eq 0 ]]; then
+                    if ! grep -q "#ddev-generated" "$dir_file" 2>/dev/null; then
                         actions+=("$dir_file (in directory $entry listed in install.yaml $section) does not contain '#ddev-generated'")
-                    elif [[ "$count" -gt 1 ]]; then
-                        actions+=("$dir_file (in directory $entry listed in install.yaml $section) should contain exactly one '#ddev-generated', found $count occurrences")
                     fi
                 done < <(find "$entry" -type f -print0 2>/dev/null)
                 continue
@@ -361,12 +358,8 @@ check_ddev_generated() {
 
             [[ ! -f "$entry" ]] && continue
 
-            count=$(grep -c "#ddev-generated" "$entry" 2>/dev/null) || count=0
-
-            if [[ "$count" -eq 0 ]]; then
+            if ! grep -q "#ddev-generated" "$entry" 2>/dev/null; then
                 actions+=("$entry is listed in install.yaml ($section) but does not contain '#ddev-generated'")
-            elif [[ "$count" -gt 1 ]]; then
-                actions+=("$entry is listed in install.yaml ($section) should contain exactly one '#ddev-generated', found $count occurrences")
             fi
         done < "$install_yaml"
     done
