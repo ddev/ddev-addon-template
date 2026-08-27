@@ -276,8 +276,11 @@ check_github_templates() {
     fi
     # Check PULL_REQUEST_TEMPLATE.md for the required PR testing instruction
     if [[ "$template" == ".github/PULL_REQUEST_TEMPLATE.md" ]]; then
-      if ! grep -q "REPLACE_ME_WITH_THIS_PR_NUMBER" "$template"; then
-        actions+=("PULL_REQUEST_TEMPLATE.md should contain 'ddev add-on get https://github.com/<your-name>/<your-repo>/tarball/refs/pull/REPLACE_ME_WITH_THIS_PR_NUMBER/head', see upstream file $UPSTREAM/$template?plain=1")
+      if ! grep -q -- "--pr REPLACE_ME_WITH_THIS_PR_NUMBER" "$template"; then
+        actions+=("PULL_REQUEST_TEMPLATE.md should contain 'ddev add-on get <your-name>/<your-repo> --pr REPLACE_ME_WITH_THIS_PR_NUMBER', see upstream file $UPSTREAM/$template?plain=1")
+      fi
+      if ! grep -q "Short Summary" "$template"; then
+        actions+=("PULL_REQUEST_TEMPLATE.md should contain a '## Short Summary (TL;DR)' section, see upstream file $UPSTREAM/$template?plain=1")
       fi
     fi
   done
