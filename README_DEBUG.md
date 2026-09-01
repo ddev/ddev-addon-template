@@ -17,7 +17,7 @@ The tests workflow can pause and hand you a terminal on the GitHub Actions runne
 
 4. Click the `Run workflow` button and you will have the option to select the branch to run the workflow from and start a debugging session by checking the `Enable remote debugging session` checkbox for this run.
 
-    ![Enable remote debugging session](images/gh-debug.jpg)
+    ![Enable remote debugging session](images/gh-tmate.jpg)
 
 5. After the `workflow_dispatch` event was triggered, click the `All workflows` link in the sidebar and then click the `tests` action in progress workflow.
 
