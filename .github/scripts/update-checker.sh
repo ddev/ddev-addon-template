@@ -239,6 +239,10 @@ check_tests_workflow() {
   if ! grep -q "ddev/github-action-add-on-test@v2" "$tests_yml"; then
     actions+=("$tests_yml should use 'ddev/github-action-add-on-test@v2', see upstream file $UPSTREAM/$tests_yml")
   fi
+  # Check for tmate, which was replaced upstream
+  if grep -qi "tmate" "$tests_yml"; then
+    actions+=("$tests_yml mentions tmate, which has been replaced upstream, use 'description: Enable remote debugging session', see upstream file $UPSTREAM/$tests_yml")
+  fi
   # Check for at least 2 instances of paths-ignore
   local paths_ignore_count
   paths_ignore_count=$(grep -o "paths-ignore:" "$tests_yml" 2>/dev/null | wc -l)
