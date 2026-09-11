@@ -249,6 +249,10 @@ check_tests_workflow() {
   if (( paths_ignore_count < 2 )); then
     actions+=("$tests_yml should contain at least 2 instances of 'paths-ignore:', found $paths_ignore_count, see upstream file $UPSTREAM/$tests_yml")
   fi
+  # Check for an 'os:' matrix, which makes it easy to add more runners, for example to test arm64
+  if ! grep -q "matrix.os" "$tests_yml"; then
+    actions+=("$tests_yml should use an 'os:' matrix and 'runs-on: \${{ matrix.os }}', see upstream file $UPSTREAM/$tests_yml")
+  fi
 }
 
 # Check docker-compose.*.yaml files for 'build:' with 'image:' usage

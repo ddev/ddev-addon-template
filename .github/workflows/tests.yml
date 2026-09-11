@@ -30,10 +30,11 @@ jobs:
   tests:
     strategy:
       matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
         ddev_version: [stable, HEAD]
       fail-fast: false
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: ddev/github-action-add-on-test@v2
