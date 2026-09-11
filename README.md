@@ -73,6 +73,7 @@ curl -fsSL https://ddev.com/s/addon-update-checker.sh | bash
 
    * In most cases, you only need to modify the `health_checks()` function and update the `GITHUB_REPO` variable to match your repository.
    * Tests will run automatically on every push to the repository, and periodically each night.
+   * Tests run on both AMD64 and ARM64 runners by default. You can add or remove runners in `matrix.os` in [.github/workflows/tests.yml](.github/workflows/tests.yml), see [GitHub-hosted runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners).
    * Please make sure to address test failures when they happen. Others will be depending on you.
    * Bats is a testing framework that just uses Bash. To run a Bats test locally, you have to install [bats-core](https://bats-core.readthedocs.io/en/stable/installation.html) and its [libraries](https://github.com/ztombol/bats-docs) first.
    * Then you download your add-on, and finally run `bats ./tests/test.bats` within the root of the uncompressed directory.
