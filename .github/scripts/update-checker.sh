@@ -190,6 +190,11 @@ check_test_bats() {
     actions+=("$test_bats should set DDEV_NO_INSTRUMENTATION=true, see upstream file $UPSTREAM/tests/test.bats")
   fi
 
+  # Check for CI=true
+  if ! grep -q "export CI=true" "$test_bats"; then
+    actions+=("$test_bats should set 'export CI=true', see upstream file $UPSTREAM/tests/test.bats")
+  fi
+
   # Check for GITHUB_REPO
   if ! grep -q "GITHUB_REPO" "$test_bats"; then
     actions+=("$test_bats should define GITHUB_REPO, see upstream file $UPSTREAM/tests/test.bats")
