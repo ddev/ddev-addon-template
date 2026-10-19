@@ -2,6 +2,9 @@
 services:
   addon-template:
     container_name: ddev-${DDEV_SITENAME}-addon-template
+    # Without a hostname, Docker uses the container ID, which shows up
+    # in the `ddev ssh -s addon-template` prompt.
+    hostname: ${DDEV_SITENAME}-addon-template
     image: ${ADDON_TEMPLATE_DOCKER_IMAGE:-ddev/ddev-utilities:latest}
     command: ["sh", "-c", "trap exit TERM; sleep infinity & wait"]
     restart: "no"
@@ -13,3 +16,16 @@ services:
     volumes:
       - ".:/mnt/ddev_config"
       - "ddev-global-cache:/mnt/ddev-global-cache"
+    # Customize DDEV behavior for this service, see
+    # https://docs.ddev.com/en/stable/users/extend/custom-docker-services/#x-ddev-extension
+    x-ddev:
+      # Shell for `ddev ssh -s addon-template`, the default is `sh`.
+      # The shell must exist in the image.
+      ssh-shell: bash
+      # Extra text for the INFO column of `ddev describe`,
+      # such as credentials or usage notes.
+      # describe-info: |
+      #   User: admin
+      #   Pass: admin
+      # Text for the URL/PORT column of `ddev describe`.
+      # describe-url-port: "extra help here"
