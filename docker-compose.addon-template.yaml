@@ -2,9 +2,6 @@
 services:
   addon-template:
     container_name: ddev-${DDEV_SITENAME}-addon-template
-    # Without a hostname, Docker uses the container ID, which shows up
-    # in the `ddev ssh -s addon-template` prompt.
-    hostname: ${DDEV_SITENAME}-addon-template
     image: ${ADDON_TEMPLATE_DOCKER_IMAGE:-ddev/ddev-utilities:latest}
     command: ["sh", "-c", "trap exit TERM; sleep infinity & wait"]
     restart: "no"

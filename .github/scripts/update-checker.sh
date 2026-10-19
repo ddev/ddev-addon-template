@@ -8,7 +8,7 @@
 #   - install.yaml configuration and version constraints
 #   - Test files (*.bats) structure and requirements
 #   - GitHub workflows and templates
-#   - Docker Compose files for offline usage support and hostname
+#   - Docker Compose files for offline usage support
 #   - File formatting (trailing newlines, whitespace)
 #   - Proper shebangs in command files
 #   - Command files are executable
@@ -269,12 +269,6 @@ check_docker_compose_yaml() {
       actions+=("$file contains 'build:', but there is no 'image:', example: 'image: \${ADDON_TEMPLATE_DOCKER_IMAGE:-ddev/ddev-utilities:latest}-\${DDEV_SITENAME}-built', this is required to use DDEV offline")
     elif grep -q "build:" "$file" && grep -q "image:" "$file" && ! grep -Eq "image:.*-\\\$\{DDEV_SITENAME\}-built" "$file"; then
       actions+=("$file contains both 'build:' and 'image:', but 'image:' line should contain '-\${DDEV_SITENAME}-built', example: 'image: \${ADDON_TEMPLATE_DOCKER_IMAGE:-ddev/ddev-utilities:latest}-\${DDEV_SITENAME}-built', this is required to use DDEV offline")
-    fi
-    local container_name_count hostname_count
-    container_name_count=$(grep -cE "^[[:space:]]*container_name:" "$file" || true)
-    hostname_count=$(grep -cE "^[[:space:]]*hostname:" "$file" || true)
-    if (( container_name_count > hostname_count )); then
-      actions+=("$file should set 'hostname:' for each service that sets 'container_name:', example: 'hostname: \${DDEV_SITENAME}-addon-template', otherwise the container ID is used as the hostname, see upstream file $UPSTREAM/docker-compose.addon-template.yaml")
     fi
   done < <(find . -name "docker-compose.*.yaml" -print0 2>/dev/null || true)
 }
