@@ -15,14 +15,24 @@ services:
       - "ddev-global-cache:/mnt/ddev-global-cache"
     # Customize DDEV behavior for this service, see
     # https://docs.ddev.com/en/stable/users/extend/custom-docker-services/#x-ddev-extension
-    x-ddev:
-      # Shell for `ddev ssh -s addon-template`, the default is `sh`.
-      # The shell must exist in the image.
-      ssh-shell: bash
-      # Extra text for the INFO column of `ddev describe`,
-      # such as credentials or usage notes.
-      # describe-info: |
-      #   User: admin
-      #   Pass: admin
-      # Text for the URL/PORT column of `ddev describe`.
-      # describe-url-port: "extra help here"
+    # x-ddev:
+    #   # Shell for `ddev ssh -s addon-template`, the default is `sh`.
+    #   # The shell must exist in the image.
+    #   ssh-shell: bash
+    #   # Extra text for the INFO column of `ddev describe`,
+    #   # such as credentials or usage notes.
+    #   describe-info: |
+    #     User: admin
+    #     Pass: admin
+    #   # Text for the URL/PORT column of `ddev describe`.
+    #   describe-url-port: "extra help here"
+    #   # Skip injecting com.ddev.* labels, so `ddev start` doesn't wait
+    #   # for a one-shot container that exits. Requires DDEV v1.25.3+.
+    #   omit-ddev-labels: true
+    #   # User for `ddev ssh`, `ddev exec`, and custom commands in this
+    #   # service. Requires DDEV v1.25.5+.
+    #   container-user: www-data
+    #   # Images to pull before building this service, such as a `FROM`
+    #   # in the Dockerfile. Requires DDEV v1.25.5+.
+    #   pull-images:
+    #     - busybox:stable
