@@ -24,6 +24,7 @@ After installation, make sure to commit the `.ddev` directory to version control
 | ------- | ----------- |
 | `ddev describe` | View service status and used ports for Add-on Template |
 | `ddev logs -s addon-template` | Check Add-on Template logs |
+| `ddev ssh -s addon-template` | Open a shell in the Add-on Template container |
 
 ## Advanced Customization
 
